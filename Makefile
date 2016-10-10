@@ -22,7 +22,7 @@
 ########################################
 
 TARGET = guild
-OBJECTS = main.o context.o  Antikythera.o ControlPoint.o Point.o  bezierCurveReader.o  bezierCurve.o  Direction.o AntikytheraPet.o
+OBJECTS = main.o utils/context.o heroes/Antikythera.o utils/ControlPoint.o utils/Point.o utils/bezierCurveReader.o utils/bezierCurve.o utils/Direction.o heroes/AntikytheraPet.o
 
 LOCAL_INC_PATH = /Users/jpaone/Desktop/include
 LOCAL_LIB_PATH = /Users/jpaone/Desktop/lib

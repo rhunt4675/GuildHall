@@ -300,7 +300,7 @@ int main(int argc, char **argv) {
     
     bezierCurveReader reader;
     camcorder = new Direction(-M_PI/3.0f, M_PI/2.8f, 10);
-    bezierCurve petPath = reader.simpleRead("petPath.csv");
+    bezierCurve petPath = reader.simpleRead("input/petPath.csv");
     antikythera = new Antikythera(10,0,10,M_PI/4,M_PI/2,&WorldContext,&petPath);
     // register callback functions...
     createMenus();

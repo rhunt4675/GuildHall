@@ -1,4 +1,4 @@
-#include"include/bezierCurve.h"
+#include "../include/bezierCurve.h"
 
 bezierCurve::bezierCurve() {
     setDefaults();

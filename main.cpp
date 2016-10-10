@@ -17,23 +17,23 @@
  */
 
 #ifdef __APPLE__			// if compiling on Mac OS
-#include <GLUT/glut.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
+	#include <GLUT/glut.h>
+	#include <OpenGL/gl.h>
+	#include <OpenGL/glu.h>
 #else					// else compiling on Linux OS
-#include <GL/glut.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+	#include <GL/glut.h>
+	#include <GL/gl.h>
+	#include <GL/glu.h>
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include<iostream>
+#include <iostream>
 
-#include"include/Antikythera.h"
-#include"include/Direction.h"
-#include"include/bezierCurveReader.h"
+#include "include/Antikythera.h"
+#include "include/Direction.h"
+#include "include/bezierCurveReader.h"
 
 // GLOBAL VARIABLES ////////////////////////////////////////////////////////////
 

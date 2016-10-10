@@ -1,4 +1,4 @@
-#include "include/Point.h"
+#include "../include/Point.h"
 
 Point operator*( Point p, float f ){
         return Point( p.getX() * f, p.getY() * f, p.getZ() * f );

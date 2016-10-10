@@ -137,6 +137,12 @@ void mouseCallback(int button, int state, int thisX, int thisY) {
     if(button == GLUT_LEFT_BUTTON){
         leftMouseButton = state;
     }
+	if (button == 3) {
+		camcorder->change_length(-1);
+	}
+	if (button == 4) {
+		camcorder->change_length(1);
+	}
     //Placed here instead of in mouseMotion becasue mouseMotion could not recive anything from GetModifiers
     mouseCTRL= (glutGetModifiers() == GLUT_ACTIVE_CTRL);
 }

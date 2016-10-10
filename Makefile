@@ -24,14 +24,14 @@
 TARGET = guild
 OBJECTS = main.o context.o  Antikythera.o ControlPoint.o Point.o  bezierCurveReader.o  bezierCurve.o  Direction.o AntikytheraPet.o
 
-LOCAL_INC_PATH = 
-LOCAL_LIB_PATH = 
-LOCAL_BIN_PATH = 
+LOCAL_INC_PATH = /Users/jpaone/Desktop/include
+LOCAL_LIB_PATH = /Users/jpaone/Desktop/lib
+LOCAL_BIN_PATH = /Users/jpaone/Desktop/bin 
 
-BUILDING_IN_LAB = 0
+BUILDING_IN_LAB = 1
 
 USING_OPENGL = 1
-USING_GLUI = 1
+USING_GLUI = 0
 
 
 ifeq ($(USER), rybailey)

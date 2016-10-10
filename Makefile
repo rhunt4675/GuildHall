@@ -24,15 +24,21 @@
 TARGET = guild
 OBJECTS = main.o context.o  Antikythera.o ControlPoint.o Point.o  bezierCurveReader.o  bezierCurve.o  Direction.o AntikytheraPet.o
 
-LOCAL_INC_PATH = /usr/include
-LOCAL_LIB_PATH = /usr/lib
-LOCAL_BIN_PATH = /usr/bin
+LOCAL_INC_PATH = 
+LOCAL_LIB_PATH = 
+LOCAL_BIN_PATH = 
 
 BUILDING_IN_LAB = 0
 
 USING_OPENGL = 1
 USING_GLUI = 1
 
+
+ifeq ($(USER), rybailey)
+LOCAL_INC_PATH = /usr/include
+LOCAL_LIB_PATH = /usr/lib
+LOCAL_BIN_PATH = /usr/bin
+endif
 #########################################################################################
 #########################################################################################
 #########################################################################################
@@ -40,7 +46,6 @@ USING_GLUI = 1
 ## !!!STOP!!!
 ## THERE IS NO NEED TO MODIFY ANYTHING BELOW THIS LINE
 ## IT WILL WORK FOR YOU.  TRUST ME
-
 
 
 

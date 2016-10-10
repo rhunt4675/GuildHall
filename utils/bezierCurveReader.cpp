@@ -1,4 +1,4 @@
-#include"bezierCurveReader.h"
+#include "../include/bezierCurveReader.h"
 using namespace std;
 
 vector<bezierCurve> bezierCurveReader::readFolder(string path){

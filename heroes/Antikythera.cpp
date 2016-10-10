@@ -1,4 +1,4 @@
-#include "include/Antikythera.h"
+#include "../include/Antikythera.h"
 
 
 Antikythera::Antikythera(float startX, float startY, float startZ, float startTheta, float startPhi, context* point, bezierCurve* petPath) : Point( startX,  startY,  startZ), Direction(startTheta,startPhi), drawable(), kitty(petPath){

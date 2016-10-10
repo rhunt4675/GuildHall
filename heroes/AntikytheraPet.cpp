@@ -1,4 +1,4 @@
-#include "include/AntikytheraPet.h"
+#include "../include/AntikytheraPet.h"
 
 void AntikytheraPet::loadPath(bezierCurve* curvey){
         path = curvey;

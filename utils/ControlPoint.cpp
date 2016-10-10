@@ -1,4 +1,4 @@
-#include "include/ControlPoint.h"
+#include "../include/ControlPoint.h"
 
 ControlPoint operator*( ControlPoint p, float f ) {
     return ControlPoint( p.getX() * f, p.getY() * f, p.getZ() * f );

@@ -333,38 +333,46 @@ void renderScene()  {
 //
 ////////////////////////////////////////////////////////////////////////////////
 void myTimer (int value) {
+    Hero *master = diomedes;
+
 	// Check which keys are down
     if (keys['w' - 'a'] == 1) {
-    	//car.rotateLeftWheel(-0.2f);
-    	//car.rotateRightWheel(-0.2f);
-    	//car.moveX(cos(car.getAngle()) * 0.3);
-    	//car.moveZ(-sin(car.getAngle()) * 0.3);
+    	master->rotateLeftWheel(-0.2f);
+    	master->rotateRightWheel(-0.2f);
+    	master->move(master->getX() + sin(master->getTheta()) * 0.3,
+                    master->getY(),
+                    master->getZ() + cos(master->getTheta()) * 0.3);
     } if (keys['s' - 'a'] == 1) {
-    	//car.rotateLeftWheel(0.2f);
-    	//car.rotateRightWheel(0.2f);
-    	//car.moveX(-cos(car.getAngle()) * 0.3);
-    	//car.moveZ(sin(car.getAngle()) * 0.3);
+    	master->rotateLeftWheel(0.2f);
+    	master->rotateRightWheel(0.2f);
+        master->move(master->getX() + -sin(master->getTheta()) * 0.3,
+                    master->getY(),
+                    master->getZ() + -cos(master->getTheta()) * 0.3);
     } if (keys['a' - 'a'] == 1) {
-    	//car.adjustAngle(0.03f);
-    	//car.rotateLeftWheel(0.05);
-    	//car.rotateRightWheel(-0.05);
+    	master->rotate(master->getTheta() + 0.03f, master->getPhi());
+    	master->rotateLeftWheel(0.05);
+    	master->rotateRightWheel(-0.05);
     } if (keys['d' - 'a'] == 1) {
-    	//car.adjustAngle(-0.03f);
-    	//car.rotateLeftWheel(-0.05);
-    	//car.rotateRightWheel(0.05);
+        master->rotate(master->getTheta() - 0.03f, master->getPhi());
+    	master->rotateLeftWheel(-0.05);
+    	master->rotateRightWheel(0.05);
     }
 
     // Check car bounds
-    //car.moveX(-car.getX() + (car.getX() < -cityLength + 5 ? -cityLength + 5 : car.getX()));
-    //car.moveZ(-car.getZ() + (car.getZ() < -cityLength + 5 ? -cityLength + 5 : car.getZ()));
-    //car.moveX(-car.getX() + (car.getX() > cityLength - 5 ? cityLength - 5 : car.getX()));
-    //car.moveZ(-car.getZ() + (car.getZ() > cityLength - 5 ? cityLength - 5 : car.getZ()));
+    master->move(master->getX() < -cityLength + 5 ? -cityLength + 5 : master->getX(),
+                master->getY(),
+                master->getZ() < -cityLength + 5 ? -cityLength + 5 : master->getZ());
+    master->move(master->getX() > cityLength - 5 ? cityLength - 5 : master->getX(),
+                master->getY(),
+                master->getZ() > cityLength - 5 ? cityLength - 5 : master->getZ());
 
     // Update camera and redraw
     antikythera->animate();
     diomedes->animate();
     //sprite.animate();
-    camera.updateCarPosition(antikythera->getX(), antikythera->getY(), antikythera->getZ());
+
+    //std::cout << antikythera->getX() << ":" << antikythera->getY() << ":" << antikythera->getZ() << std::endl;
+    camera.updateCarPosition(diomedes->getX(), diomedes->getY(), diomedes->getZ());
 	glutPostRedisplay();
 	glutTimerFunc(20, myTimer, 0);
 }
@@ -418,7 +426,9 @@ int main(int argc, char **argv) {
 
     // move the hero vehicles
     antikythera->move(0, 0, 0);
-    diomedes->move(10, 0, 10);
+    antikythera->rotate(0, M_PI / 2);
+    diomedes->move(10, 0, 0);
+    diomedes->rotate(0, M_PI / 2);
 
     // give the camera a scenic starting point.
     camera.updateOrientation(50.f, 0.f, M_PI * 3.f / 4.f);

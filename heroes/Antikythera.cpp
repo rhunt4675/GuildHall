@@ -13,7 +13,7 @@
 
 Antikythera::Antikythera() {
     posX = posY = posZ = 0;
-    phi = M_PI / 2; theta = pitch = 0;
+    phi = theta = 0;
 }
 
 //Draws the main body
@@ -163,7 +163,7 @@ void Antikythera::draw(){
     glTranslatef(posX, posY, posZ);
     glRotatef(theta * 180 / M_PI - 90, 0 , 1, 0);
     glRotatef(phi * 180 / M_PI - 90, 0 , 0 , 1);
-    glRotatef(pitch, 1 , 0 ,0);
+    //glRotatef(pitch, 1 , 0 ,0);
     drawHero();
     //kitty.draw();
     glPopMatrix();
@@ -174,6 +174,12 @@ void Antikythera::move(float x, float y, float z) {
     posX = x;
     posY = y;
     posZ = z; 
+}
+
+// Rotates the hero/vehicle
+void Antikythera::rotate(float theta, float phi) {
+    this->theta = theta;
+    this->phi = phi;
 }
 
 

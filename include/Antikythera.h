@@ -14,14 +14,19 @@ class Antikythera : public Hero {
 
         // Set the hero position
         void move(float x, float y, float z);
+        void rotate(float theta, float phi);
 
         // Get the hero position
         float getX() {return posX;}
         float getY() {return posY;}
         float getZ() {return posZ;}
+        float getTheta() {return theta;}
+        float getPhi() {return phi;}
 
         // Animate the hero
         void animate() {}
+        void rotateLeftWheel(float amt) {}
+        void rotateRightWheel(float amt) {}
 
     private:
         void drawBody();
@@ -39,7 +44,7 @@ class Antikythera : public Hero {
         void drawHero();
 
         //AntikytheraPet kitty;
-        float posX, posY, posZ, phi, theta, pitch;
+        float posX, posY, posZ, phi, theta;
         
         //context* worldContext;
         

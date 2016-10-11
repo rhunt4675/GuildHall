@@ -92,8 +92,8 @@ void drawGrid() {
 	for (unsigned int i = 0; i < surfacePoints.size() / res; i++) {
 		glBegin(GL_QUAD_STRIP);
 		for (int j = 0; j < res / 2; j++) {
-			glVertex3f(surfacePoints[i * res + 2 * j].getX(), surfacePoints[i * res + 2 * j].getY(), surfacePoints[i * res + 2 * j].getZ());
-			glVertex3f(surfacePoints[i * res + 2 * j + res].getX(), surfacePoints[i * res + 2 * j + res].getY(), surfacePoints[i * res + 2 * j + res].getZ());
+			glVertex3fv(surfacePoints[i * res + 2 * j].getPos());
+			glVertex3fv(surfacePoints[i * res + 2 * j + res].getPos());
 		}
 		glEnd();
 	}

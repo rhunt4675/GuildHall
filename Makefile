@@ -22,7 +22,8 @@
 ########################################
 
 TARGET = guild
-OBJECTS = main.o utils/context.o heroes/Antikythera.o heroes/Diomedes.o utils/ControlPoint.o utils/Point.o utils/bezierCurveReader.o utils/bezierCurve.o utils/Direction.o heroes/AntikytheraPet.o utils/Camera.o
+
+OBJECTS = main.o utils/context.o heroes/Antikythera.o heroes/Diomedes.o utils/ControlPoint.o utils/Point.o utils/bezierCurve.o utils/Direction.o heroes/AntikytheraPet.o utils/Camera.o utils/InputReader.o heroes/Asterion.o
 
 LOCAL_INC_PATH = /Users/jpaone/Desktop/include
 LOCAL_LIB_PATH = /Users/jpaone/Desktop/lib

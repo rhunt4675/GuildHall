@@ -4,7 +4,7 @@ bezierCurve::bezierCurve() {
     setDefaults();
 }
 
-bezierCurve::bezierCurve(vector<ControlPoint>& pointy) {
+bezierCurve::bezierCurve(vector<Point>& pointy) {
     controlPoints = pointy;
     caculatePoints();
     setDefaults();
@@ -36,13 +36,13 @@ void bezierCurve::setDefaults(){
 
 }
 
-void bezierCurve::addPoint(ControlPoint pointy){
+void bezierCurve::addPoint(Point pointy){
     controlPoints.push_back(pointy);
     caculatePoints();
 }
 
 
-Point bezierCurve::evaluateBezierCurve( ControlPoint p0, ControlPoint p1, ControlPoint p2, ControlPoint p3, float t ) {
+Point bezierCurve::evaluateBezierCurve( Point p0, Point p1, Point p2, Point p3, float t ) {
     Point q0 = (1-t)*p0 + t*p1;
     Point q1 = (1-t)*p1 + t*p2;
     Point q2 = (1-t)*p2 + t*p3;
@@ -95,11 +95,11 @@ void bezierCurve::toogleCurveVis(){
 
 void bezierCurve::draw(){
     glPushMatrix();
-    if(pointsVis){
-        for(unsigned int i = 0; i < controlPoints.size(); ++i){
-            controlPoints[i].draw();
-        }
-    }
+//    if(pointsVis){
+//        for(unsigned int i = 0; i < controlPoints.size(); ++i){
+//            controlPoints[i].draw();
+//        }
+//    }
 
     if(cageVis){
         glPushMatrix();
@@ -131,4 +131,8 @@ void bezierCurve::draw(){
     }
 
     glPopMatrix();
+}
+
+int bezierCurve::getResolution() {
+	return resolution;
 }

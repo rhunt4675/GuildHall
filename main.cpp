@@ -2,7 +2,7 @@
  *  CSCI 441, Computer Graphics, Fall 2016
  *
  *  Project: A04
- *  File: main.cpp
+ *  File: .cpp
  *
  *	Author: Ryan Hunt - Fall 2016
  *
@@ -17,6 +17,8 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include "include/bezierCurve.h"
+#include "include/InputReader.h"
 
  #ifdef __APPLE__           // if compiling on Mac OS
     #include <GLUT/glut.h>
@@ -30,6 +32,7 @@
 
 #include "include/Antikythera.h"
 #include "include/Diomedes.h"
+#include "include/Asterion.h"
 #include "include/Direction.h"
 #include "include/Camera.h"
 
@@ -313,6 +316,7 @@ void renderScene()  {
     // Display the Cars
     antikythera->draw();
     diomedes->draw();
+    asterion->draw();
 
     // Draw the Control Points
     /*glPushMatrix();
@@ -369,6 +373,7 @@ void myTimer (int value) {
     // Update camera and redraw
     antikythera->animate();
     diomedes->animate();
+    asterion->animate();
     //sprite.animate();
 
     //std::cout << antikythera->getX() << ":" << antikythera->getY() << ":" << antikythera->getZ() << std::endl;
@@ -398,12 +403,12 @@ void myMenu(int value) {
 	}
 }
 
-// main() //////////////////////////////////////////////////////////////////////
+// () //////////////////////////////////////////////////////////////////////
 //
 //  Program entry point. Does not process command line arguments.
 //
 ////////////////////////////////////////////////////////////////////////////////
-int main(int argc, char **argv) {
+int main (int argc, char **argv) {
 	/*// check command line args
 	if (argc <= 1) {
 		std::cerr << "Please provide a control points file as the first argument. Exiting." << std::endl;
@@ -420,15 +425,22 @@ int main(int argc, char **argv) {
     glutInitWindowSize(windowWidth,windowHeight);
     glutCreateWindow("Guild Wars");
 
+
+    InputReader reader("input/infile.txt");
+    bezierCurve petPath = reader.getPetPath();
+
     // initialize the hero vehicles
     antikythera = new Antikythera();
     diomedes = new Diomedes();
+    asterion = new Asterion();
 
     // move the hero vehicles
     antikythera->move(0, 0, 0);
     antikythera->rotate(0, M_PI / 2);
     diomedes->move(10, 0, 0);
     diomedes->rotate(0, M_PI / 2);
+    asterion->move(-10, 0, 0);
+    asterion->rotate(0, 0);
 
     // give the camera a scenic starting point.
     camera.updateOrientation(50.f, 0.f, M_PI * 3.f / 4.f);
@@ -460,3 +472,4 @@ int main(int argc, char **argv) {
 
     return(0);
 }
+

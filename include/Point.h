@@ -1,6 +1,8 @@
 #ifndef cordinate_header
 #define cordinate_header
 #include "Direction.h"
+
+
 class Point {
     public:
         float getX();

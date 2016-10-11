@@ -52,7 +52,7 @@ static int cityLength = 50;                 // city boundaries
 
 Camera camera, fpcamera;					// world camera
 Hero *antikythera, *diomedes, *asterion;    // hero vehicles
-Hero *wanderer, *camerafollower;
+Hero *wanderer, *camerafollower, *fol1, *fol2;
 bezierCurve heroPath1, heroPath2;
 Point prevPoint1, prevPoint2;
 vector<Point> surfacePoints;
@@ -488,13 +488,13 @@ void myTimer (int value) {
 	// Update follower positions
 	Direction tangent = heroPath1.getArcTanget();
 	Point follower = heroPath1.getArcCordinate();
-	antikythera->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
-//	antikythera->rotate(tangent.getPhi(), tangent.getTheta());
+	fol1->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
+//	fol1->rotate(tangent.getPhi(), tangent.getTheta());
 
 	tangent = heroPath2.getTanget();
 	follower = heroPath2.getNextCordinate();
-	asterion->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
-	asterion->rotate(tangent.getPhi(), tangent.getTheta());
+	fol2->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
+	fol2->rotate(tangent.getPhi(), tangent.getTheta());
 
 //	std::cout << tangent.getTheta() << " " << tangent.getPhi() << endl;
 
@@ -615,6 +615,8 @@ int main (int argc, char **argv) {
     // setup wanderer and camera follower
     wanderer = diomedes;
     camerafollower = diomedes;
+	fol1 = asterion;
+	fol2 = antikythera;
 
     // give the camera a scenic starting point.
     camera.updateOrientation(50.f, 0.f, M_PI * 3.f / 4.f);

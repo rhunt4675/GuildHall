@@ -1,7 +1,7 @@
 #include "../include/Antikythera.h"
 
 
-Antikythera::Antikythera(float startX, float startY, float startZ, float startTheta, float startPhi, context* point, bezierCurve* petPath) : Point( startX,  startY,  startZ), Direction(startTheta,startPhi), drawable(), kitty(petPath){
+/*Antikythera::Antikythera(float startX, float startY, float startZ, float startTheta, float startPhi, context* point, bezierCurve* petPath) : kitty(petPath) {
     worldContext = point;
     airborn = false;
     anglePitch = 0;
@@ -9,6 +9,11 @@ Antikythera::Antikythera(float startX, float startY, float startZ, float startTh
     worldContext->removeCollision(startX,startY,startZ);
     leftWheels = 0;
     rightWheels = 0;
+}*/
+
+Antikythera::Antikythera() {
+    posX = posY = posZ = 0;
+    phi = theta = 0;
 }
 
 //Draws the main body
@@ -149,27 +154,48 @@ void Antikythera::drawHero(){
     drawBackJets();
     glPopMatrix();
 
+    // Text
+    glDisable( GL_LIGHTING );
+    char srctext[25] = "Antikythera";
+    glPushMatrix();
+    glColor3f(1, 1, 1);
+    glTranslatef(0, 4, 0);
+    glScalef(0.005, 0.005, 0.005);
+    for (int c=0; srctext[c] != 0; ++c)
+        glutStrokeCharacter(GLUT_STROKE_ROMAN, srctext[c]);
+    glPopMatrix();
+    glEnable( GL_LIGHTING );
+
 
 }
 
-//Draws the hero character/vehical
+//Draws the hero character/vehicle
 void Antikythera::draw(){
-
     glPushMatrix(); 
     glTranslatef(posX, posY, posZ);
-    glRotatef(angleTheta * 180 / M_PI - 90, 0 , 1, 0);
-    glRotatef(anglePhi * 180 / M_PI - 90, 0 , 0 , 1);
-    glRotatef(anglePitch, 1 , 0 ,0);
+    glRotatef(theta * 180 / M_PI - 90, 0 , 1, 0);
+    glRotatef(phi * 180 / M_PI - 90, 0 , 0 , 1);
+    //glRotatef(pitch, 1 , 0 ,0);
     drawHero();
-    kitty.draw();
+    //kitty.draw();
     glPopMatrix();
-        
+}
 
+// Moves the hero/vehicle
+void Antikythera::move(float x, float y, float z) {
+    posX = x;
+    posY = y;
+    posZ = z; 
+}
+
+// Rotates the hero/vehicle
+void Antikythera::rotate(float theta, float phi) {
+    this->theta = theta;
+    this->phi = phi;
 }
 
 
-
-//Handles the movement caculations for the hero. Converting the hero's theta into a change in the hero's position
+/*//Handles the movement caculations for the hero. Converting the hero's theta into a change in the hero's position
 void Antikythera::updateHeroPos(int direction){
 
     recomputeOrientation();
@@ -186,9 +212,9 @@ void Antikythera::updateHeroPos(int direction){
     }   
 
 
-}
+}*/
 
-bool Antikythera::fireRockets(float direction){
+/*bool Antikythera::fireRockets(float direction){
     if(worldContext->checkBounds(posX,posY+direction,posZ)){
         change_pos(0,direction,0);
         return true;
@@ -267,12 +293,11 @@ void Antikythera::timeEvent(int value){
         kitty.updateColors(worldContext->getRand(),worldContext->getRand(),worldContext->getRand());
     }
     kitty.timeEvent(ringAngle);   
-}
+}*/
 
-void Antikythera::tooglePointVis(){
+/*void Antikythera::togglePointVisibility(){
     kitty.tooglePointVis();
 }
-void Antikythera::toogleCurveVis(){
-       kitty.toogleCurveVis();
-}
-
+void Antikythera::toggleCurveVisibility(){
+    kitty.toogleCurveVis();
+}*/

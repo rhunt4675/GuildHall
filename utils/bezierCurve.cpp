@@ -1,10 +1,12 @@
 #include "../include/bezierCurve.h"
 
+int bezierCurve::resolution = 300;
+
 bezierCurve::bezierCurve() {
     setDefaults();
 }
 
-bezierCurve::bezierCurve(vector<ControlPoint>& pointy) {
+bezierCurve::bezierCurve(vector<Point>& pointy) {
     controlPoints = pointy;
     caculatePoints();
     setDefaults();
@@ -48,7 +50,7 @@ void bezierCurve::setDefaults(){
 
 }
 
-void bezierCurve::addPoint(ControlPoint pointy){
+void bezierCurve::addPoint(Point pointy){
     controlPoints.push_back(pointy);
     caculatePoints();
 }
@@ -59,7 +61,7 @@ Point bezierCurve::linearInterpolation(Point a, Point b, float t){
 	return p;
 }
 
-Point bezierCurve::evaluateBezierCurve( ControlPoint p0, ControlPoint p1, ControlPoint p2, ControlPoint p3, float t ) {
+Point bezierCurve::evaluateBezierCurve( Point p0, Point p1, Point p2, Point p3, float t ) {
     Point q0 = linearInterpolation(p0,p1,t);
     Point q1 = linearInterpolation(p1,p2,t);
     Point q2 = linearInterpolation(p2,p3,t);
@@ -76,6 +78,7 @@ unsigned int bezierCurve::getSize(){
 
 void bezierCurve::caculatePoints(){
     curvePoints.clear();
+    location = 0;
     //std::cout<<"BEGIN"<<std::endl;
     float step=1.0/resolution;
     for(unsigned int start = 0; start + 4 <= controlPoints.size(); start += 3){
@@ -163,11 +166,11 @@ void bezierCurve::toogleCurveVis(){
 
 void bezierCurve::draw(){
     glPushMatrix();
-    if(pointsVis){
-        for(unsigned int i = 0; i < controlPoints.size(); ++i){
-            controlPoints[i].draw();
-        }
-    }
+//    if(pointsVis){
+//        for(unsigned int i = 0; i < controlPoints.size(); ++i){
+//            controlPoints[i].draw();
+//        }
+//    }
 
     if(cageVis){
         glPushMatrix();
@@ -200,3 +203,4 @@ void bezierCurve::draw(){
 
     glPopMatrix();
 }
+

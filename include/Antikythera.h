@@ -1,49 +1,66 @@
-#include"Point.h"
-#include"context.h"
-#include"Direction.h"
-#include"AntikytheraPet.h"
-#include"drawable.h"
+//#include "Point.h"
+//#include "Direction.h"
+//#include "drawable.h"
+//#include "context.h"
+#include "Hero.h"
+//#include "AntikytheraPet.h"
 
-class Antikythera : public Point, public Direction, public drawable {
+class Antikythera : public Hero {
     public:
-    void draw();
-    void timeEvent(int value);
-    Antikythera(float startX, float startY, float startZ, float startTheta, float startPhi, context* point, bezierCurve* petPath );
-    Antikythera();
-    void tooglePointVis();
-    void toogleCurveVis();
-    private:
-    void drawBody();
-    void drawAxel();
-    void drawWheel();
-    void drawWheelAndAxel();
-    void drawDriveTrain(float rotation);
-    void drawRocket();
-    void drawUnderJets();
-    void drawBackJets();
-    void updatePos(int direction);
-    bool fireRockets(float direction);
-    void updateHeroPos(int direction);
-    float anglePitch;
-    void drawHero();
+        void draw();
+        void timeEvent(int value);
+        //Antikythera(float startX, float startY, float startZ, float startTheta, float startPhi, context* point, bezierCurve* petPath );
+        Antikythera();
 
-    AntikytheraPet kitty;
-    
-    context* worldContext;
-    
-    //Movement and animation speed paramaters
-    const float heroMoveConst = .15;
-    const float heroTurnConst = .01;
-    const float wheelSpeed = 1;
-    const float wheelTurnMult = .7;
-    const float wheelStrightMult = 1.5;
-    //Hero Posistion and angle
-    float leftWheels, rightWheels;
-    float ringAngle;
-    //Jetpack
-    bool airborn;
-    float rearFlame;
-    float rocketAnimation;
+        // Set the hero position
+        void move(float x, float y, float z);
+        void rotate(float theta, float phi);
+
+        // Get the hero position
+        float getX() {return posX;}
+        float getY() {return posY;}
+        float getZ() {return posZ;}
+        float getTheta() {return theta;}
+        float getPhi() {return phi;}
+
+        // Animate the hero
+        void animate() {}
+        void rotateLeftWheel(float amt) {}
+        void rotateRightWheel(float amt) {}
+
+    private:
+        void drawBody();
+        void drawAxel();
+        void drawWheel();
+        void drawWheelAndAxel();
+        void drawDriveTrain(float rotation);
+        void drawRocket();
+        void drawUnderJets();
+        void drawBackJets();
+        void updatePos(int direction);
+        bool fireRockets(float direction);
+        void updateHeroPos(int direction);
+        float anglePitch;
+        void drawHero();
+
+        //AntikytheraPet kitty;
+        float posX, posY, posZ, phi, theta;
+        
+        //context* worldContext;
+        
+        //Movement and animation speed paramaters
+        const float heroMoveConst = .15;
+        const float heroTurnConst = .01;
+        const float wheelSpeed = 1;
+        const float wheelTurnMult = .7;
+        const float wheelStrightMult = 1.5;
+        //Hero Posistion and angle
+        float leftWheels, rightWheels;
+        float ringAngle;
+        //Jetpack
+        bool airborn;
+        float rearFlame;
+        float rocketAnimation;
     
         const int key_w = 119;
         const int key_s = 115;

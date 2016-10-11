@@ -486,14 +486,15 @@ void myTimer (int value) {
                 wanderer->getZ() > cityLength - 5 ? cityLength - 5 : wanderer->getZ());
 
 	// Update follower positions
-	Point follower = heroPath1.getNextCordinate();
+	Direction tangent = heroPath1.getArcTanget();
+	Point follower = heroPath1.getArcCordinate();
 	antikythera->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
-//	Direction tangent = heroPath1.getTangent();
-//	antikythera->rotate(tangent.getTheta(), tangent.getPhi());
+	antikythera->rotate(tangent.getTheta(), tangent.getPhi());
+
+	tangent = heroPath2.getTanget();
 	follower = heroPath2.getNextCordinate();
 	asterion->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
-//	tangent = heroPath2.getTangent();
-//	asterion->rotate(tangent.getTheta(), tangent.getPhi());
+	asterion->rotate(tangent.getTheta(), tangent.getPhi());
 
 
     // Update camera and redraw

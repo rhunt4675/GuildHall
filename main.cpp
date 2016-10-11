@@ -491,16 +491,13 @@ void myTimer (int value) {
 	// Update follower positions
 	Direction tangent = heroPath1.getArcTanget();
 	Point follower = heroPath1.getArcCordinate();
-	antikythera->move(follower.getX(),follower.getY(),follower.getZ());
-//	antikythera->rotate(tangent.getPhi(), tangent.getTheta());
-
-    	fol1->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
-//	fol1->rotate(tangent.getPhi(), tangent.getTheta());
+	fol1->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
+	fol1->rotate(tangent.getTheta(), tangent.getPhi());
 
 	tangent = heroPath2.getTanget();
 	follower = heroPath2.getNextCordinate();
 	fol2->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
-	fol2->rotate(tangent.getPhi(), tangent.getTheta());
+	fol2->rotate(tangent.getTheta(), tangent.getPhi());
 
 //	std::cout << tangent.getTheta() << " " << tangent.getPhi() << endl;
 

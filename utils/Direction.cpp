@@ -40,8 +40,8 @@ void Direction::recomputeAngle(){
     dirZ /= length;
 
     //TODO: Figure out and implement this caculation
-   //angleTheta = acos(dirZ/length);
-   //anglePhi = atan2(dirY,dirX);
+   anglePhi = acos(dirY/length);
+   angleTheta = atan2(-dirZ,dirX) - M_PI / 2;
 
 }
 

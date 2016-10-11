@@ -215,6 +215,15 @@ void mouseCallback(int button, int state, int thisX, int thisY) {
 
 	    camera.updateOrientation(cameraRho, cameraTheta, cameraPhi);
 	    glutPostRedisplay();        // redraw our scene from our new camera POV
+	} else {
+	    if(button == GLUT_LEFT_BUTTON) {
+	        leftMouseButton = state;
+
+	        if (state == GLUT_DOWN) {
+	            mouseX = thisX;
+	            mouseY = thisY;
+	        }
+	    }
 	}
 }
 
@@ -245,6 +254,16 @@ void mouseMotion(int x, int y) {
         
         camera.updateOrientation(cameraRho, cameraTheta, cameraPhi);
         glutPostRedisplay();	    // redraw our scene from our new camera POV
+
+    } else if (leftMouseButton == GLUT_DOWN && !camera.arcBallEnabled()) {
+        float deltaTheta = -(x - mouseX) * 0.005;
+        float deltaPhi = -(y - mouseY) * 0.005;
+
+        camera.change_angle(fpcamera.getTheta() + deltaTheta, fpcamera.getPhi() + deltaPhi);
+        glutPostRedisplay();
+        // Check Phi Bounds
+        //if (cameraPhi < 0) cameraPhi = 0.001;
+        //else if (cameraPhi > M_PI) cameraPhi = M_PI - 0.001;
     }
 
     mouseX = x;
@@ -373,8 +392,8 @@ void renderScene()  {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glDisable( GL_CULL_FACE );
-
 		glClear(GL_DEPTH_BUFFER_BIT);
+		glViewport(0, 0, windowWidth, windowHeight);
 
 	    glDisable( GL_LIGHTING );
 		glPushMatrix();
@@ -571,7 +590,6 @@ int main (int argc, char **argv) {
 
     InputReader reader("input/infile.txt");
     bezierCurve petPath = reader.getPetPath();
-
 	surfacePoints = reader.getPoints();
 
     // initialize the hero vehicles

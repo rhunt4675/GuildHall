@@ -21,7 +21,7 @@ void Camera::updateCarPosition(float x, float y, float z) {
 }
 
 void Camera::updateCarPosition(Point pos) {
-        car = pos;
+	car = pos;
 }
 void Camera::updateUpVector(float x, float y, float z) {
 	upVec.normalize(x,y,z);

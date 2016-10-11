@@ -489,13 +489,14 @@ void myTimer (int value) {
 	Direction tangent = heroPath1.getArcTanget();
 	Point follower = heroPath1.getArcCordinate();
 	antikythera->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
-	antikythera->rotate(tangent.getTheta(), tangent.getPhi());
+//	antikythera->rotate(tangent.getPhi(), tangent.getTheta());
 
 	tangent = heroPath2.getTanget();
 	follower = heroPath2.getNextCordinate();
 	asterion->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
-	asterion->rotate(tangent.getTheta(), tangent.getPhi());
+	asterion->rotate(tangent.getPhi(), tangent.getTheta());
 
+//	std::cout << tangent.getTheta() << " " << tangent.getPhi() << endl;
 
     // Update camera and redraw
     antikythera->animate();

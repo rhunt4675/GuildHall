@@ -209,7 +209,9 @@ Direction bezierCurve::getTanget(){
     else {
         b = curvePoints[location + 1];
     }
-    return Direction(b,a);
+    Direction d(a,b);
+	d.normalize(d.getDirX(), d.getDirY(), d.getDirZ());
+	return d;
 }
 
 
@@ -225,5 +227,7 @@ Direction bezierCurve::getArcTanget(){
     else {
         b = arcLengthCurve[arcLocation + 1];
     }
-    return Direction(b,a);
+    Direction d(a,b);
+	d.normalize(d.getDirX(), d.getDirY(), d.getDirZ());
+	return d;
 }

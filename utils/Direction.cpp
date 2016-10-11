@@ -42,8 +42,8 @@ void Direction::recomputeAngle(){
 
 
     //TODO: Figure out and implement this caculation
-   angleTheta = 0;
-   anglePhi = 0;
+   angleTheta = acos(dirZ/length);
+   anglePhi = atan(dirY/dirX);
 
 }
 
@@ -137,6 +137,5 @@ void Direction::normalize(float x, float y, float z){
     dirX /= length;
     dirY /= length;
     dirZ /= length;
-
-
+    recomputeAngle();
 }

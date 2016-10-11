@@ -51,7 +51,6 @@ private:
     vector<Point> curvePoints;
     unsigned int location;
     void caculatePoints();
-    int resolution;
     unsigned int arcLocation;
     float distance(Point& start, Point& end);   
     bool threshold(float a, float b);

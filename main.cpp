@@ -371,9 +371,12 @@ void renderScene()  {
 	    glCallList(environmentDL);
 
 	    // Display the Cars
-	    antikythera->draw();
 	    diomedes->draw();
+            glPushMatrix();
+            glTranslatef(diomedes->getX(), diomedes->getY(), diomedes->getZ());
+	    antikythera->draw();
 	    asterion->draw();
+            glPopMatrix();
 	}
 
 	// Draw the Real-Time FPS in the bottom left
@@ -488,12 +491,13 @@ void myTimer (int value) {
 	// Update follower positions
 	Direction tangent = heroPath1.getArcTanget();
 	Point follower = heroPath1.getArcCordinate();
-	antikythera->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
+        cout<<"Print: ("<<follower.getX()<<", "<<follower.getY()<<", "<<follower.getZ()<<")"<<endl;
+	antikythera->move(follower.getX(),follower.getY(),follower.getZ());
 //	antikythera->rotate(tangent.getPhi(), tangent.getTheta());
 
 	tangent = heroPath2.getTanget();
 	follower = heroPath2.getNextCordinate();
-	asterion->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
+	asterion->move(follower.getX(),follower.getY(),follower.getZ());
 	asterion->rotate(tangent.getPhi(), tangent.getTheta());
 
 //	std::cout << tangent.getTheta() << " " << tangent.getPhi() << endl;

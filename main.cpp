@@ -607,10 +607,10 @@ int main (int argc, char **argv) {
     diomedes->move(10, 0, 0);
     diomedes->rotate(0, M_PI / 2);
 	// move the hero vehicles
-	Point init = heroPath1.getNextCordinate();
+	for (int i = 0; i < 300; i++) heroPath1.getArcCordinate();		// offsets the cars
+	Point init = heroPath1.getArcCordinate();
     antikythera->move(init.getX(), init.getY(), init.getZ());
     antikythera->rotate(0, M_PI / 2);
-	for (int i = 0; i < 20; i++) heroPath2.getNextCordinate();		// offsets the cars
 	init = heroPath2.getNextCordinate();
     asterion->move(init.getX(), init.getY(), init.getZ());
     asterion->rotate(0, M_PI / 2);

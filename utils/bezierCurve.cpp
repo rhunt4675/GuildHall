@@ -205,12 +205,10 @@ Direction bezierCurve::getTanget(){
     Point b;
     if (location == (curvePoints.size() -1)){
         b = curvePoints[0];
-    }
-    else {
+    } else {
         b = curvePoints[location + 1];
     }
     Direction d(a,b);
-	d.normalize(d.getDirX(), d.getDirY(), d.getDirZ());
 	return d;
 }
 

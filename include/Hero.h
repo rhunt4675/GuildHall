@@ -11,8 +11,10 @@
     #include <GL/glu.h>
 #endif
 #include <cmath>
+#include "Point.h"
+#include "Direction.h"
 
-class Hero {
+class Hero: public Point, public Direction{
 	public:
 		// Draw the hero
 		virtual void draw() = 0;
@@ -21,19 +23,13 @@ class Hero {
 		virtual void animate() = 0;
 
 		// Set the hero position
-		virtual void move(float x, float y, float z) = 0;
-		virtual void rotate(float theta, float phi) = 0;
 
 		// Get the hero position
-		virtual float getX() = 0;
-		virtual float getY() = 0;
-		virtual float getZ() = 0;
-		virtual float getTheta() = 0;
-		virtual float getPhi() = 0;
-
-		// Rotate the wheels (if applicable)
+			
+                // Rotate the wheels (if applicable)
 		virtual void rotateLeftWheel(float amt) = 0;
 		virtual void rotateRightWheel(float amt) = 0;
+
 };
 
 #endif

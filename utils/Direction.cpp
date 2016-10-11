@@ -21,7 +21,11 @@ Direction::Direction(){
     recomputeOrientation();
 };
 
-
+void Direction::rotate(float theta, float phi){
+    angleTheta = theta;
+    anglePhi = phi;
+    recomputeOrientation();
+}
 
 float Direction::getDirX(){
     return dirX;

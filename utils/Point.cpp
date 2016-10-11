@@ -24,6 +24,12 @@ Point operator+(Direction d, Point p){
 }
 
 
+void Point::move(float x, float y, float z){
+    posX = x;
+    posY = y;
+    posZ = z;
+}
+
 float Point::getX(){
     return posX;
 }

@@ -11,19 +11,7 @@ class Antikythera : public Hero {
         void timeEvent(int value);
         //Antikythera(float startX, float startY, float startZ, float startTheta, float startPhi, context* point, bezierCurve* petPath );
         Antikythera();
-
-        // Set the hero position
-        void move(float x, float y, float z);
-        void rotate(float theta, float phi);
-
-        // Get the hero position
-        float getX() {return posX;}
-        float getY() {return posY;}
-        float getZ() {return posZ;}
-        float getTheta() {return theta;}
-        float getPhi() {return phi;}
-
-        // Animate the hero
+       // Animate the hero
         void animate() {}
         void rotateLeftWheel(float amt) {}
         void rotateRightWheel(float amt) {}

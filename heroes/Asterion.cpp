@@ -90,6 +90,8 @@ void Asterion::buildCar() {
     glEnable( GL_LIGHTING );
 }
 
+/*
+
 void Asterion::move(float xIn, float yIn, float zIn) {
 	x = xIn;
 	y = yIn;
@@ -101,12 +103,14 @@ void Asterion::rotate(float thetaIn, float phiIn) {
 	phi = phiIn;
 }
 
+*/
+
 void Asterion::draw() {
 	glPushMatrix();
-	glTranslatef(x, y, z);
+	glTranslatef(posX, posY, posZ);
 	glScalef(0.4, 0.4, 0.4);
-	glRotatef(theta * 180 / M_PI - 90, 0, 1, 0);
-	glRotatef(phi * 180 / M_PI - 90, 0, 0, 1);
+	glRotatef(angleTheta * 180 / M_PI - 90, 0, 1, 0);
+	glRotatef(anglePhi * 180 / M_PI - 90, 0, 0, 1);
 	buildCar();
 	glPopMatrix();
 }

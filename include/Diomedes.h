@@ -6,7 +6,7 @@
 class Diomedes : public Hero {
 private:
 	// car location in CARTESIAN coordinates
-	float x, y, z, theta, phi;
+	//float x, y, z, theta, phi;
 
 	// car WHEEL/ANTENNA rotation in radians
 	float wheelRotLeft, wheelRotRight, antennaRot;
@@ -24,7 +24,8 @@ public:
 	// Default Constructor
 	Diomedes();
 
-	// Getters
+	/*
+        // Getters
 	float getX() { return x; }
 	float getY() { return y; }
 	float getZ() { return z; }
@@ -35,7 +36,8 @@ public:
 	void move(float x, float y, float z);
 	void rotate(float theta, float phi);
 
-	// Animate antenna (call this at 50Hz)
+	*/
+        // Animate antenna (call this at 50Hz)
 	void animate() { antennaRot += 0.07f; }
 
 	// Draw the car

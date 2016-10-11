@@ -10,6 +10,7 @@ class Point {
         float getZ();
         float* getPos();
         void change_pos(float x, float y, float z);
+        void move(float x, float y, float z);
         Point(float startX, float startY, float startZ);
         Point();
 

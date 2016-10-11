@@ -6,7 +6,6 @@
 //
 /////////////////////////////////////////////////////////////////////////
 Diomedes::Diomedes() {
-	x = y = z = theta = phi = 0;
 }
 
 // draw() /////////////////////////////////////////////////////////////////
@@ -16,12 +15,14 @@ Diomedes::Diomedes() {
 ///////////////////////////////////////////////////////////////////////////
 void Diomedes::draw() {
     glPushMatrix();
-    glTranslatef(x, y, z);
-    glRotatef(theta * 180 / M_PI - 90, 0, 1, 0);
-    glRotatef(phi * 180 / M_PI - 90, 0 , 0 , 1);
+    glTranslatef(posX,posY,posZ);
+    glRotatef(angleTheta * 180 / M_PI - 90, 0, 1, 0);
+    glRotatef(anglePhi * 180 / M_PI - 90, 0 , 0 , 1);
     buildCar();
     glPopMatrix();
 }
+
+/*
 
 // move() /////////////////////////////////////////////////////////////////
 //
@@ -43,6 +44,8 @@ void Diomedes::rotate(float theta, float phi) {
     this->theta = theta;
     this->phi = phi;
 }
+
+*/
 
 // drawWheel() /////////////////////////////////////////////////////////////////
 //

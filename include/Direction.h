@@ -13,6 +13,7 @@ class Direction {
         float getPhi();
         float getLength();
         void change_angle(float theta, float phi);
+        void rotate(float theta, float phi);
         void change_length(float delta);
         Direction(float startTheta, float startPhi, float startLength);
         Direction();

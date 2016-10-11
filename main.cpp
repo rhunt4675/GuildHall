@@ -485,16 +485,9 @@ void myTimer (int value) {
     diomedes->animate();
     asterion->animate();
 
-    // Compute direction
-    float dirX = sin(camerafollower->getTheta()) * sin(camerafollower->getPhi());
-    float dirY = cos(camerafollower->getPhi());
-    float dirZ = cos(camerafollower->getTheta()) * sin(camerafollower->getPhi());
-	float magnitude = sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
-	dirX /= magnitude; dirY /= magnitude; dirZ /= magnitude;
-
 	// Update Cameras
     camera.updateCarPosition(camerafollower->getX(), camerafollower->getY(), camerafollower->getZ());
-    fpcamera.updatePosition(camerafollower->getX(), camerafollower->getY() + 5, camerafollower->getZ(), dirX, dirY, dirZ);
+    fpcamera.updatePosition(camerafollower->getX(), camerafollower->getY() + 5, camerafollower->getZ(), camerafollower->getVecX(), camerafollower->getVecY(), camerafollower->getVecZ());
 	glutPostRedisplay();
 	glutTimerFunc(20, myTimer, 0);
 }

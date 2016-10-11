@@ -21,23 +21,9 @@ InputReader::InputReader(string infile) {
 	}
 	calcSurface(points);
 
-	// Gets pet curve
-	getline(inputData, line);
-	int numPoints = atoi(line.c_str());
-	vector<Point> petCurvePoints;
-	for (int j = 0; j < numPoints; j++) {
-		getline(inputData, line);
-		ss.clear(); ss.str("");
-		ss << line;
-		int x, y, z;
-		ss >> x >> y >> z;
-		petCurvePoints.push_back(Point(x, y, z));
-	}
-	petPath = bezierCurve(petCurvePoints);
-
 	// Gets hero curve
 	getline(inputData, line);
-	numPoints = atoi(line.c_str());
+	int numPoints = atoi(line.c_str());
 	vector<Point> heroCurvePoints;
 	for (int j = 0; j < numPoints; j++) {
 		getline(inputData, line);

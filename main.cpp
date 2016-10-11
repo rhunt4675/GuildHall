@@ -353,18 +353,53 @@ void renderScene()  {
 void myTimer (int value) {
     Hero *master = diomedes;
 
+
+//cout << int(((master->getX() + 50 + sin(master->getTheta()) * 0.3) / 100 * bezierCurve::getResolution() + (master->getZ() + 50) / 100) * bezierCurve::getResolution()) << endl;
+
+	// calculate surface normal at current location
+	Point point0 = surfacePoints[(int((master->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((master->getZ() + 50) / 100 * bezierCurve::getResolution()))];
+	Point point1 = surfacePoints[(int((master->getX() + 50 + sin(master->getTheta())) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((master->getZ() + 50 + cos(master->getTheta())) / 100 * bezierCurve::getResolution()))];
+	Point point2 = surfacePoints[(int((master->getX() + 50 + sin(master->getTheta() - M_PI / 2)) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((master->getZ() + 50 + cos(master->getTheta() - M_PI / 4) + 1) / 100 * bezierCurve::getResolution()))];
+//	std::cout << point0.getX() << " " <<  point0.getY() << " " << point0.getZ() << endl;
+//	std::cout << point1.getX() << " " <<  point1.getY() << " " << point1.getZ() << endl;
+//	std::cout << point2.getX() << " " <<  point2.getY() << " " << point2.getZ() << endl << endl;
+	Point a(point1.getX() - point0.getX(), point1.getY() - point0.getY(), point1.getZ() - point0.getZ());
+	Point b(point2.getX() - point0.getX(), point2.getY() - point0.getY(), point2.getZ() - point0.getZ());
+
+//	Point a(signbit(sin(master->getTheta()) * (point1.getX() - point0.getX())), point1.getY() - point0.getY(), signbit(cos(master->getTheta()) * (point1.getZ() - point0.getZ())));
+//	Point b(signbit(sin(master->getTheta()) * (point2.getX() - point0.getX())), point2.getY() - point0.getY(), signbit(cos(master->getTheta()) * (point2.getZ() - point0.getZ())));
+
+	Point cross(a.getY() * b.getZ() - a.getZ() * b.getY(), a.getZ() * b.getX() - a.getX() * b.getZ(), a.getX() * b.getY() - a.getY() * b.getX());
+
+	float mag = sqrt(cross.getX() * cross.getX() + cross.getY() * cross.getY() + cross.getZ() * cross.getZ());
+	Point norm(cross.getX() / mag, cross.getY() / mag, cross.getZ() / mag);
+
+	float newPhi = acos(norm.getY()) - M_PI / 2;
+	if (point0.getY() < point1.getY()) newPhi = M_PI - newPhi;
+	if (newPhi < 0) newPhi *= -1;
+	if (newPhi > M_PI) newPhi -= M_PI;
+	
+	if (!(newPhi != newPhi))
+		master->rotate(master->getTheta(), newPhi);
+
+
+//std::cout << int((master->getZ() + 50) / 100 * bezierCurve::getResolution()) << " " << (int((master->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((master->getZ() + 50) / 100 * bezierCurve::getResolution())) << endl;
+
+//std::cout << norm.getY() << " " << acos(norm.getY()) << endl;
+//	std::cout << norm.getX() << " " <<  norm.getY() << " " << norm.getZ() << endl;
+
 	// Check which keys are down
     if (keys['w' - 'a'] == 1) {
     	master->rotateLeftWheel(-0.2f);
     	master->rotateRightWheel(-0.2f);
     	master->move(master->getX() + sin(master->getTheta()) * 0.3,
-                    master->getY(),
+					surfacePoints[(int((master->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((master->getZ() + 50) / 100 * bezierCurve::getResolution()))].getY(),
                     master->getZ() + cos(master->getTheta()) * 0.3);
     } if (keys['s' - 'a'] == 1) {
     	master->rotateLeftWheel(0.2f);
     	master->rotateRightWheel(0.2f);
         master->move(master->getX() + -sin(master->getTheta()) * 0.3,
-                    master->getY(),
+					surfacePoints[(int((master->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((master->getZ() + 50) / 100 * bezierCurve::getResolution()))].getY(),
                     master->getZ() + -cos(master->getTheta()) * 0.3);
     } if (keys['a' - 'a'] == 1) {
     	master->rotate(master->getTheta() + 0.03f, master->getPhi());

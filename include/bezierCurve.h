@@ -37,6 +37,8 @@ public:
     unsigned int getSize();
     Point getNextCordinate();
     Point getArcCordinate();
+    Direction getTanget();
+    Direction getArcTanget();
     void arcLengthParam();
     Point linearInterpolation(Point a, Point b, float t);
     static int getResolution() { return resolution; }

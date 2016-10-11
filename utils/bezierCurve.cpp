@@ -199,3 +199,28 @@ void bezierCurve::draw(){
     glPopMatrix();
 }
 
+
+Direction bezierCurve::getTanget(){
+    Point a = curvePoints[location];
+    Point b;
+    if (location + 1 = curvePoints.size()){
+        b = curvePoints[0];
+    }
+    else {
+        b = cruvePoints[1];
+    }
+    return Direction(b,a);
+}
+
+
+Direction bezierCurve::getArcTanget(){
+    Point a = arcLengthCurve[location];
+    Point b;
+    if (location + 1 = arcLengthCurve.size()){
+        b = arcLengthCurve[0];
+    }
+    else {
+        b = arcLenghtCurve[1];
+    }
+    return Direction(b,a);
+}

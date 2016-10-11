@@ -160,4 +160,16 @@ void Diomedes::buildCar() {
     glTranslatef(0, 1.5, 0);
     drawBody();
     glPopMatrix();
+
+	// Text
+    glDisable( GL_LIGHTING );
+	char srctext[25] = "Diomedes";
+	glPushMatrix();
+	glColor3f(1, 1, 1);
+	glTranslatef(0, 5, 0);
+	glScalef(0.005, 0.005, 0.005);
+	for (int c=0; srctext[c] != 0; ++c)
+		glutStrokeCharacter(GLUT_STROKE_ROMAN, srctext[c]);
+	glPopMatrix();
+    glEnable( GL_LIGHTING );
 }

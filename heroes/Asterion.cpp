@@ -1,7 +1,5 @@
 #include "Asterion.h"
 
-
-
 void Asterion::drawSpoke() {
 	glPushMatrix();
 	glColor3f(0, 0, 0);					// black
@@ -78,6 +76,18 @@ void Asterion::buildCar() {
 	glRotatef(teapotRotation, 0, 1, 0);
 	glutSolidTeapot(1);
 	glPopMatrix();
+
+	// Text
+    glDisable( GL_LIGHTING );
+	char srctext[25] = "Asterion";
+	glPushMatrix();
+	glColor3f(1, 1, 1);
+	glTranslatef(0, 10, 0);
+	glScalef(0.01, 0.01, 0.01);
+	for (int c=0; srctext[c] != 0; ++c)
+		glutStrokeCharacter(GLUT_STROKE_ROMAN, srctext[c]);
+	glPopMatrix();
+    glEnable( GL_LIGHTING );
 }
 
 void Asterion::move(float xIn, float yIn, float zIn) {
@@ -95,8 +105,8 @@ void Asterion::draw() {
 	glPushMatrix();
 	glTranslatef(x, y, z);
 	glScalef(0.4, 0.4, 0.4);
-	glRotatef(theta * 180 / M_PI, 0, 1, 0);
-	glRotatef(phi * 180 / M_PI, 0, 0, 1);
+	glRotatef(theta * 180 / M_PI - 90, 0, 1, 0);
+	glRotatef(phi * 180 / M_PI - 90, 0, 0, 1);
 	buildCar();
 	glPopMatrix();
 }

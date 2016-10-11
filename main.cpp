@@ -17,8 +17,7 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
-#include "include/bezierCurve.h"
-#include "include/InputReader.h"
+#include <sys/time.h>
 
  #ifdef __APPLE__           // if compiling on Mac OS
     #include <GLUT/glut.h>
@@ -35,6 +34,8 @@
 #include "include/Asterion.h"
 #include "include/Direction.h"
 #include "include/Camera.h"
+#include "include/bezierCurve.h"
+#include "include/InputReader.h"
 
 // GLOBAL VARIABLES ////////////////////////////////////////////////////////////
 
@@ -49,13 +50,17 @@ int keys[26] = {0};                         // key state array
 GLuint environmentDL;                       // display list for the 'city'
 static int cityLength = 50;                 // city boundaries
 
-Camera camera;								// world camera
+Camera camera, fpcamera;					// world camera
 Hero *antikythera, *diomedes, *asterion;    // hero vehicles
+Hero *wanderer, *camerafollower;
 //Sprite sprite;								// hero's sprite
 
 //std::vector<Point> points;					// Bezier control points
-bool displayBezierCurve = true;				// Toggle Bezier curve visibility
-bool displayControlCage = true;				// Toggle control cage visibility
+//bool displayBezierCurve = true;				// Toggle Bezier curve visibility
+//bool displayControlCage = true;				// Toggle control cage visibility
+bool displayFPCamera = false;				// Toggle first person camera
+int frames = 1;
+long int start_millis = 0;
 
 // getRand() ///////////////////////////////////////////////////////////////////
 //
@@ -171,31 +176,33 @@ void resizeWindow(int w, int h) {
 //
 ////////////////////////////////////////////////////////////////////////////////
 void mouseCallback(int button, int state, int thisX, int thisY) {
-	// Camera state
-	float cameraRho = camera.getRho();
-	float cameraTheta = camera.getTheta();
-	float cameraPhi = camera.getPhi();
+	if (camera.arcBallEnabled()) {
+		// Camera state
+		float cameraRho = camera.getRho();
+		float cameraTheta = camera.getTheta();
+		float cameraPhi = camera.getPhi();
 
-    // update the left mouse button states, if applicable
-    if (button == GLUT_LEFT_BUTTON) {
-        leftMouseButton = state;
+	    // update the left mouse button states, if applicable
+	    if (button == GLUT_LEFT_BUTTON) {
+	        leftMouseButton = state;
 
-        if (state == GLUT_DOWN) {
-            mouseX = thisX;
-            mouseY = thisY;
-        }
-    } else if (button == 3) { // Wheel
-        if (state == GLUT_UP) return;
-        cameraRho -= 2;
-		cameraRho = (cameraRho < 5 ? 5 : cameraRho);
-    } else if (button == 4) { // Wheel
-        if (state == GLUT_UP) return;
-        cameraRho += 2;
-		cameraRho = (cameraRho > 100 ? 100 : cameraRho);
-    }
+	        if (state == GLUT_DOWN) {
+	            mouseX = thisX;
+	            mouseY = thisY;
+	        }
+	    } else if (button == 3) { // Wheel
+	        if (state == GLUT_UP) return;
+	        cameraRho -= 2;
+			cameraRho = (cameraRho < 5 ? 5 : cameraRho);
+	    } else if (button == 4) { // Wheel
+	        if (state == GLUT_UP) return;
+	        cameraRho += 2;
+			cameraRho = (cameraRho > 100 ? 100 : cameraRho);
+	    }
 
-    camera.updateOrientation(cameraRho, cameraTheta, cameraPhi);
-    glutPostRedisplay();        // redraw our scene from our new camera POV
+	    camera.updateOrientation(cameraRho, cameraTheta, cameraPhi);
+	    glutPostRedisplay();        // redraw our scene from our new camera POV
+	}
 }
 
 // mouseMotion() ///////////////////////////////////////////////////////////////
@@ -213,7 +220,7 @@ void mouseMotion(int x, int y) {
 	float cameraTheta = camera.getTheta();
 	float cameraPhi = camera.getPhi();
 
-	if (leftMouseButton == GLUT_DOWN) {
+	if (leftMouseButton == GLUT_DOWN && camera.arcBallEnabled()) {
         if (glutGetModifiers() & GLUT_ACTIVE_CTRL) {
             cameraRho -= (y - mouseY) * 0.1;
             cameraRho = (cameraRho < 5 ? 5 : (cameraRho > 100 ? 100 : cameraRho));
@@ -313,22 +320,65 @@ void renderScene()  {
     // Display the Environment
     glCallList(environmentDL);
 
-    // Display the Cars
-    antikythera->draw();
-    diomedes->draw();
-    asterion->draw();
+	// Display the Cars
+	antikythera->draw();
+	diomedes->draw();
+	asterion->draw();
 
-    // Draw the Control Points
-    /*glPushMatrix();
-    glTranslatef(car.getX(), car.getY(), car.getZ());
-    glRotatef(car.getAngle() * 180 / M_PI, 0, 1, 0);
-    if (displayControlCage) Point::plotPoints(points);
-    if (displayBezierCurve) Point::plotCurve(points);
-    sprite.draw(points);
-    glPopMatrix();*/
+    // Optionally display 1st Person Camera
+    if (displayFPCamera) {
+
+	    // First-Person Cam
+	    glClear(GL_DEPTH_BUFFER_BIT);
+	    glViewport(2*windowWidth/3, 0, windowWidth/3, windowHeight/3);
+	    fpcamera.doLookAt();
+	    
+	    // Display the Environment
+	    glCallList(environmentDL);
+
+	    // Display the Cars
+	    antikythera->draw();
+	    diomedes->draw();
+	    asterion->draw();
+	}
+
+	// Draw the Real-Time FPS in the bottom left
+	{
+		// Calculate FPS
+	    struct timeval tp;
+		gettimeofday(&tp, NULL);
+		long int millis = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+	    char *stat = new char[100];
+	    sprintf(stat, "FPS: %3.2f", 1000.f * (float) frames / (millis - start_millis));
+
+		// Draw frames per second
+		glMatrixMode( GL_PROJECTION );
+		glPushMatrix();
+    	glLoadIdentity();
+    	glOrtho( 0, 200, 0, 200, -1, 1);
+		
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glDisable( GL_CULL_FACE );
+
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+	    glDisable( GL_LIGHTING );
+		glPushMatrix();
+		glColor3f(1, 1, 1);
+		glScalef(0.05, 0.05, 0.05);
+		for (int c=0; stat[c] != 0; ++c)
+			glutStrokeCharacter(GLUT_STROKE_ROMAN, stat[c]);
+		glPopMatrix();
+		glEnable( GL_LIGHTING ); 
+	    delete stat;
+	}
 
     // push the back buffer to the screen
     glutSwapBuffers();
+
+    // update the counter
+    frames++;
 }
 
 // myTimer() ////////////////////////////////////////////////////////////
@@ -337,68 +387,132 @@ void renderScene()  {
 //
 ////////////////////////////////////////////////////////////////////////////////
 void myTimer (int value) {
-    Hero *master = diomedes;
-
 	// Check which keys are down
     if (keys['w' - 'a'] == 1) {
-    	master->rotateLeftWheel(-0.2f);
-    	master->rotateRightWheel(-0.2f);
-    	master->move(master->getX() + sin(master->getTheta()) * 0.3,
-                    master->getY(),
-                    master->getZ() + cos(master->getTheta()) * 0.3);
+    	wanderer->rotateLeftWheel(-0.2f);
+    	wanderer->rotateRightWheel(-0.2f);
+    	wanderer->move(wanderer->getX() + sin(wanderer->getTheta()) * 0.3,
+                    wanderer->getY(),
+                    wanderer->getZ() + cos(wanderer->getTheta()) * 0.3);
     } if (keys['s' - 'a'] == 1) {
-    	master->rotateLeftWheel(0.2f);
-    	master->rotateRightWheel(0.2f);
-        master->move(master->getX() + -sin(master->getTheta()) * 0.3,
-                    master->getY(),
-                    master->getZ() + -cos(master->getTheta()) * 0.3);
+    	wanderer->rotateLeftWheel(0.2f);
+    	wanderer->rotateRightWheel(0.2f);
+        wanderer->move(wanderer->getX() + -sin(wanderer->getTheta()) * 0.3,
+                    wanderer->getY(),
+                    wanderer->getZ() + -cos(wanderer->getTheta()) * 0.3);
     } if (keys['a' - 'a'] == 1) {
-    	master->rotate(master->getTheta() + 0.03f, master->getPhi());
-    	master->rotateLeftWheel(0.05);
-    	master->rotateRightWheel(-0.05);
+    	wanderer->rotate(wanderer->getTheta() + 0.03f, wanderer->getPhi());
+    	wanderer->rotateLeftWheel(0.05);
+    	wanderer->rotateRightWheel(-0.05);
+    	fpcamera.updateOrientation(fpcamera.getRho(), fpcamera.getTheta() - 0.03f, fpcamera.getPhi());
     } if (keys['d' - 'a'] == 1) {
-        master->rotate(master->getTheta() - 0.03f, master->getPhi());
-    	master->rotateLeftWheel(-0.05);
-    	master->rotateRightWheel(0.05);
+        wanderer->rotate(wanderer->getTheta() - 0.03f, wanderer->getPhi());
+    	wanderer->rotateLeftWheel(-0.05);
+    	wanderer->rotateRightWheel(0.05);
+    	fpcamera.updateOrientation(fpcamera.getRho(), fpcamera.getTheta() + 0.03f, fpcamera.getPhi());
+    }
+
+    // Move freecam
+    if (!camera.arcBallEnabled() && (keys['i' - 'a'] == 1 || keys['j' - 'a'] == 1 || keys['k' - 'a'] == 1 || keys['l' - 'a'] == 1)) {
+        float dirX = camera.getDirX();
+        float dirY = camera.getDirY();
+        float dirZ = camera.getDirZ();
+
+        if (keys['k' - 'a'] == 1) camera.updatePosition(camera.getX() + dirX, camera.getY() + dirY, camera.getZ() + dirZ, dirX, dirY, dirZ);
+        if (keys['i' - 'a'] == 1) camera.updatePosition(camera.getX() - dirX, camera.getY() - dirY, camera.getZ() - dirZ, dirX, dirY, dirZ);
+        if (keys['j' - 'a'] == 1) camera.updatePosition(camera.getX(), camera.getY(), camera.getZ(), dirX, dirY, dirZ);
+        if (keys['l' - 'a'] == 1) camera.updatePosition(camera.getX(), camera.getY(), camera.getZ(), dirX, dirY, dirZ);
     }
 
     // Check car bounds
-    master->move(master->getX() < -cityLength + 5 ? -cityLength + 5 : master->getX(),
-                master->getY(),
-                master->getZ() < -cityLength + 5 ? -cityLength + 5 : master->getZ());
-    master->move(master->getX() > cityLength - 5 ? cityLength - 5 : master->getX(),
-                master->getY(),
-                master->getZ() > cityLength - 5 ? cityLength - 5 : master->getZ());
+    wanderer->move(wanderer->getX() < -cityLength + 5 ? -cityLength + 5 : wanderer->getX(),
+                wanderer->getY(),
+                wanderer->getZ() < -cityLength + 5 ? -cityLength + 5 : wanderer->getZ());
+    wanderer->move(wanderer->getX() > cityLength - 5 ? cityLength - 5 : wanderer->getX(),
+                wanderer->getY(),
+                wanderer->getZ() > cityLength - 5 ? cityLength - 5 : wanderer->getZ());
 
     // Update camera and redraw
     antikythera->animate();
     diomedes->animate();
     asterion->animate();
-    //sprite.animate();
 
-    //std::cout << antikythera->getX() << ":" << antikythera->getY() << ":" << antikythera->getZ() << std::endl;
-    camera.updateCarPosition(diomedes->getX(), diomedes->getY(), diomedes->getZ());
+    // Compute direction
+    float dirX = sin(camerafollower->getTheta()) * sin(camerafollower->getPhi());
+    float dirY = cos(camerafollower->getPhi());
+    float dirZ = cos(camerafollower->getTheta()) * sin(camerafollower->getPhi());
+	float magnitude = sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
+	dirX /= magnitude; dirY /= magnitude; dirZ /= magnitude;
+
+	// Update Cameras
+    camera.updateCarPosition(camerafollower->getX(), camerafollower->getY(), camerafollower->getZ());
+    fpcamera.updatePosition(camerafollower->getX(), camerafollower->getY() + 5, camerafollower->getZ(), dirX, dirY, dirZ);
 	glutPostRedisplay();
 	glutTimerFunc(20, myTimer, 0);
 }
 
+// cameraSelect() //////////////////////////////////////////////////////////////
+//
+//  Handles camera select menu events.
+//
+////////////////////////////////////////////////////////////////////////////////
+void cameraSelect(int value) {
+	switch (value) {
+	// Switch to ArcBall
+	case 0:
+		camera.enableArcBallCam(); 
+		glutPostRedisplay();
+		break;
+
+	// Switch to FreeCam
+	case 1:
+		camera.enableFreeCam();
+		glutPostRedisplay();
+		break;
+
+	// Show/Hide First Person Camera
+	case 2:
+		displayFPCamera = !displayFPCamera;
+		break;
+	}
+}
+
+// heroSelect() /////////////////////////////////////////////////////////////////
+//
+//  Handles hero select menu events.
+//
+////////////////////////////////////////////////////////////////////////////////
+void heroSelect(int value) {
+	switch (value) {
+	// Antikythera
+	case 0:
+		camerafollower = antikythera;
+		glutPostRedisplay();
+		break;
+
+	// Asterion
+	case 1:
+		camerafollower = asterion;
+		glutPostRedisplay();
+		break;
+
+	// Diomedes
+	case 2:
+		camerafollower = diomedes;
+		glutPostRedisplay();
+		break;
+	}
+}
+
 // myMenu() //////////////////////////////////////////////////////////////////////
 //
-//  Handles popup menu events.
+//  Handles main menu events.
 //
 ////////////////////////////////////////////////////////////////////////////////
 void myMenu(int value) {
 	switch (value) {
-	// Hide Control Cage
-	case 0:
-		displayControlCage = !displayControlCage; break;
-
-	// Hide Bezier Curve
-	case 1:
-		displayBezierCurve = !displayBezierCurve; break;
-
 	// Quit
-	case 2:
+	case 0:
 		exit(0);
 	}
 }
@@ -409,15 +523,6 @@ void myMenu(int value) {
 //
 ////////////////////////////////////////////////////////////////////////////////
 int main (int argc, char **argv) {
-	/*// check command line args
-	if (argc <= 1) {
-		std::cerr << "Please provide a control points file as the first argument. Exiting." << std::endl;
-		exit(1);
-	}
-
-    // read control points from file
-    points = Point::readPoints(argv[1]);*/
-
     // create a double-buffered GLUT window at (50,50) with predefined windowsize
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
@@ -440,18 +545,36 @@ int main (int argc, char **argv) {
     diomedes->move(10, 0, 0);
     diomedes->rotate(0, M_PI / 2);
     asterion->move(-10, 0, 0);
-    asterion->rotate(0, 0);
+    asterion->rotate(0, M_PI / 2);
+
+    // setup wanderer and camera follower
+    wanderer = diomedes;
+    camerafollower = diomedes;
 
     // give the camera a scenic starting point.
     camera.updateOrientation(50.f, 0.f, M_PI * 3.f / 4.f);
-    camera.updateCarPosition(antikythera->getX(), antikythera->getY(), antikythera->getZ());
+    camera.updateCarPosition(camerafollower->getX(), camerafollower->getY(), camerafollower->getZ());
     camera.updateUpVector(0, 1, 0);
 
-    // initialize the popup menu
+    // give the fpcamera a scenic starting point
+    fpcamera.enableFreeCam();
+    fpcamera.updateUpVector(0, 1, 0);
+
+    // initialize the popup menus
+    int cselect = glutCreateMenu(cameraSelect);
+    glutAddMenuEntry("ArcBall Camera", 0);
+    glutAddMenuEntry("Free Camera", 1);
+    glutAddMenuEntry("Show/Hide 1st-Person Camera", 2);
+
+    int hselect = glutCreateMenu(heroSelect);
+    glutAddMenuEntry("Antikythera", 0);
+    glutAddMenuEntry("Asterion", 1);
+    glutAddMenuEntry("Diomedes", 2);
+
     glutCreateMenu(myMenu);
-    glutAddMenuEntry("Display/Hide Control Cage", 0);
-    glutAddMenuEntry("Display/Hide Bezier Curve", 1);
-    glutAddMenuEntry("Quit", 2);
+    glutAddSubMenu("Camera Selection", cselect);
+    glutAddSubMenu("Hero Selection", hselect);
+    glutAddMenuEntry("Quit", 0);
     glutAttachMenu(GLUT_RIGHT_BUTTON);
 
     // register callback functions...
@@ -462,14 +585,20 @@ int main (int argc, char **argv) {
     glutReshapeFunc(resizeWindow);
     glutMouseFunc(mouseCallback);
     glutMotionFunc(mouseMotion);
-	glutTimerFunc(0, myTimer, 0);   
+	glutTimerFunc(0, myTimer, 0); 
 
     // do some basic OpenGL setup
     initScene();
+
+    // hit the stopwatch
+    struct timeval tp;
+	gettimeofday(&tp, NULL);
+	start_millis = tp.tv_sec * 1000 + tp.tv_usec / 1000;
 
     // and enter the GLUT loop, never to exit.
     glutMainLoop();
 
     return(0);
 }
+
 

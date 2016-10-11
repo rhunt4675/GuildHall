@@ -154,6 +154,18 @@ void Antikythera::drawHero(){
     drawBackJets();
     glPopMatrix();
 
+    // Text
+    glDisable( GL_LIGHTING );
+    char srctext[25] = "Antikythera";
+    glPushMatrix();
+    glColor3f(1, 1, 1);
+    glTranslatef(0, 4, 0);
+    glScalef(0.005, 0.005, 0.005);
+    for (int c=0; srctext[c] != 0; ++c)
+        glutStrokeCharacter(GLUT_STROKE_ROMAN, srctext[c]);
+    glPopMatrix();
+    glEnable( GL_LIGHTING );
+
 
 }
 

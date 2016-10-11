@@ -7,7 +7,7 @@ InputReader::InputReader(string infile) {
 
 	// Gets surface of world
 	getline(inputData, line);
-	int numSurfaces = stoi(line);
+	int numSurfaces = atoi(line.c_str());
 	vector<Point> surfacePoints;
 	for (int i = 0; i < numSurfaces; i++) {
 		for (int j = 0; j < 16; j++) {
@@ -23,7 +23,7 @@ InputReader::InputReader(string infile) {
 
 	// Gets pet curve
 	getline(inputData, line);
-	int numPoints = stoi(line);
+	int numPoints = atoi(line.c_str());
 	vector<Point> petCurvePoints;
 	for (int j = 0; j < numPoints; j++) {
 		getline(inputData, line);
@@ -37,7 +37,7 @@ InputReader::InputReader(string infile) {
 
 	// Gets hero curve
 	getline(inputData, line);
-	numPoints = stoi(line);
+	numPoints = atoi(line.c_str());
 	vector<Point> heroCurvePoints;
 	for (int j = 0; j < numPoints; j++) {
 		getline(inputData, line);

@@ -191,7 +191,7 @@ void resizeWindow(int w, int h) {
 void mouseCallback(int button, int state, int thisX, int thisY) {
 	if (camera.arcBallEnabled()) {
 		// Camera state
-		float cameraRho = camera.getRho();
+		float cameraRho = camera.getLength();
 		float cameraTheta = camera.getTheta();
 		float cameraPhi = camera.getPhi();
 
@@ -238,7 +238,7 @@ void mouseCallback(int button, int state, int thisX, int thisY) {
 ////////////////////////////////////////////////////////////////////////////////
 void mouseMotion(int x, int y) {
 	// Camera state
-	float cameraRho = camera.getRho();
+	float cameraRho = camera.getLength();
 	float cameraTheta = camera.getTheta();
 	float cameraPhi = camera.getPhi();
 
@@ -259,7 +259,7 @@ void mouseMotion(int x, int y) {
         float deltaTheta = -(x - mouseX) * 0.005;
         float deltaPhi = -(y - mouseY) * 0.005;
 
-        camera.change_angle(fpcamera.getTheta() + deltaTheta, fpcamera.getPhi() + deltaPhi);
+        camera.change_angle(deltaTheta, deltaPhi);
         glutPostRedisplay();
         // Check Phi Bounds
         //if (cameraPhi < 0) cameraPhi = 0.001;
@@ -468,12 +468,12 @@ void myTimer (int value) {
     	wanderer->rotate(wanderer->getTheta() + 0.03f, wanderer->getPhi());
     	wanderer->rotateLeftWheel(0.05);
     	wanderer->rotateRightWheel(-0.05);
-    	fpcamera.updateOrientation(fpcamera.getRho(), fpcamera.getTheta() - 0.03f, fpcamera.getPhi());
+    	fpcamera.updateOrientation(fpcamera.getLength(), fpcamera.getTheta() - 0.03f, fpcamera.getPhi());
     } if (keys['d' - 'a'] == 1) {
         wanderer->rotate(wanderer->getTheta() - 0.03f, wanderer->getPhi());
     	wanderer->rotateLeftWheel(-0.05);
     	wanderer->rotateRightWheel(0.05);
-    	fpcamera.updateOrientation(fpcamera.getRho(), fpcamera.getTheta() + 0.03f, fpcamera.getPhi());
+    	fpcamera.updateOrientation(fpcamera.getLength(), fpcamera.getTheta() + 0.03f, fpcamera.getPhi());
     }
 
     // Move freecam

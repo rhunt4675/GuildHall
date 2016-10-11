@@ -1,10 +1,9 @@
 #include "../include/Camera.h"
 
 void Camera::updateOrientation(float rho, float theta, float phi) {
-    posX = (rho * sin(theta) * sin(phi));
-    posY = (-rho * cos(phi));
-    posZ = (-rho * cos(theta) * sin(phi));
-    this->rho = rho; this->angleTheta = theta; this->anglePhi = phi;
+    this->length = rho; 
+    this->angleTheta = theta; this->anglePhi = phi;
+    recomputeOrientation();
 }
 
 void Camera::updatePosition(float x, float y, float z, float dirX, float dirY, float dirZ) {
@@ -32,19 +31,33 @@ void Camera::updateUpVector(Direction up) {
 
 void Camera::doLookAt() {
     glLoadIdentity();
-
     if (arcBall)
-		gluLookAt( posX + car.getX(), posY + car.getY(), posZ + car.getZ(),
+		gluLookAt( car.getX() + dirX*length, car.getY() + dirY*length, car.getZ() + dirZ*length,
 				car.getX(), car.getY(), car.getZ(),
 				upVec.getDirX(), upVec.getDirY(), upVec.getDirZ());
-	else
+	else {
+                std::cout<<"Angle: ("<<angleTheta<<", "<<anglePhi<<") "<<std::endl;
+                std::cout<<"Updated: ("<<dirX<<", "<<dirY<<", "<<dirZ<<")"<<std::endl;
 		gluLookAt( posX, posY, posZ,
 				posX + dirX, posY + dirY, posZ + dirZ,
 				upVec.getDirX(), upVec.getDirY(), upVec.getDirZ());
-}
 
+        }
+}
 void Camera::enableFreeCam() {
-    normalize(-posX,-posY,-posZ);
+    	if (arcBall) {
+		posX = car.getX() + dirX * length;
+		posY = car.getY() + dirY * length;
+		posZ = car.getZ() + dirZ * length;
+    }
+    std::cout<<"Before: ("<<dirX<<", "<<dirY<<", "<<dirZ<<")"<<std::endl;
+    std::cout<<"Before: ("<<angleTheta<<", "<<anglePhi<<") "<<std::endl;
+    angleTheta += M_PI;
+    anglePhi = M_PI - anglePhi;
+    recomputeOrientation();
+    //normalize(-posX,-posY,-posZ);
+    std::cout<<"After: ("<<dirX<<", "<<dirY<<", "<<dirZ<<")"<<std::endl;
+    std::cout<<"Angle: ("<<angleTheta<<", "<<anglePhi<<") "<<std::endl;
     /*
         dirX = -posX;
 	dirY = -posY;
@@ -54,11 +67,7 @@ void Camera::enableFreeCam() {
 	dirX /= magnitude; dirY /= magnitude; dirZ /= magnitude;
 
         */
-	if (arcBall) {
-		posX += car.getX();
-		posY += car.getY();
-		posZ += car.getZ();
-	}
+
 
 	arcBall = false;
 }

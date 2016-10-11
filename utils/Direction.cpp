@@ -1,7 +1,6 @@
 #include "../include/Direction.h"
 
 
-
 Direction::Direction(float startTheta, float startPhi){
     angleTheta = startTheta;
     anglePhi = startPhi;
@@ -40,10 +39,9 @@ void Direction::recomputeAngle(){
     dirY /= length;
     dirZ /= length;
 
-
     //TODO: Figure out and implement this caculation
-   angleTheta = acos(dirZ/length);
-   anglePhi = atan(dirY/dirX);
+   //angleTheta = acos(dirZ/length);
+   //anglePhi = atan2(dirY,dirX);
 
 }
 
@@ -132,10 +130,5 @@ void Direction::normalize(float x, float y, float z){
     dirX = x;
     dirY = y;
     dirZ = z;
-    length = dirX * dirX + dirY * dirY + dirZ * dirZ;
-    length = sqrt(length);
-    dirX /= length;
-    dirY /= length;
-    dirZ /= length;
     recomputeAngle();
 }

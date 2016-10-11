@@ -36,8 +36,6 @@ void Camera::doLookAt() {
 				car.getX(), car.getY(), car.getZ(),
 				upVec.getDirX(), upVec.getDirY(), upVec.getDirZ());
 	else {
-                std::cout<<"Angle: ("<<angleTheta<<", "<<anglePhi<<") "<<std::endl;
-                std::cout<<"Updated: ("<<dirX<<", "<<dirY<<", "<<dirZ<<")"<<std::endl;
 		gluLookAt( posX, posY, posZ,
 				posX + dirX, posY + dirY, posZ + dirZ,
 				upVec.getDirX(), upVec.getDirY(), upVec.getDirZ());
@@ -50,14 +48,10 @@ void Camera::enableFreeCam() {
 		posY = car.getY() + dirY * length;
 		posZ = car.getZ() + dirZ * length;
     }
-    std::cout<<"Before: ("<<dirX<<", "<<dirY<<", "<<dirZ<<")"<<std::endl;
-    std::cout<<"Before: ("<<angleTheta<<", "<<anglePhi<<") "<<std::endl;
     angleTheta += M_PI;
     anglePhi = M_PI - anglePhi;
     recomputeOrientation();
     //normalize(-posX,-posY,-posZ);
-    std::cout<<"After: ("<<dirX<<", "<<dirY<<", "<<dirZ<<")"<<std::endl;
-    std::cout<<"Angle: ("<<angleTheta<<", "<<anglePhi<<") "<<std::endl;
     /*
         dirX = -posX;
 	dirY = -posY;

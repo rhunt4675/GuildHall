@@ -53,6 +53,7 @@ static int cityLength = 50;                 // city boundaries
 Camera camera, fpcamera;					// world camera
 Hero *antikythera, *diomedes, *asterion;    // hero vehicles
 Hero *wanderer, *camerafollower;
+vector<Point> surfacePoints;
 //Sprite sprite;								// hero's sprite
 
 //std::vector<Point> points;					// Bezier control points
@@ -85,16 +86,28 @@ void drawGrid() {
      */
     glDisable( GL_LIGHTING );
 
+	glColor3ub(50, 50, 50);
+
+	int res = bezierCurve::getResolution();
+	for (unsigned int i = 0; i < surfacePoints.size() / res; i++) {
+		glBegin(GL_QUAD_STRIP);
+		for (int j = 0; j < res / 2; j++) {
+			glVertex3f(surfacePoints[i * res + 2 * j].getX(), surfacePoints[i * res + 2 * j].getY(), surfacePoints[i * res + 2 * j].getZ());
+			glVertex3f(surfacePoints[i * res + 2 * j + res].getX(), surfacePoints[i * res + 2 * j + res].getY(), surfacePoints[i * res + 2 * j + res].getZ());
+		}
+		glEnd();
+	}
+
     /** TODO #3: DRAW A GRID IN THE XZ-PLANE USING GL_LINES **/
-    glBegin(GL_LINES); {
-    	glColor3ub(50, 50, 50);
-        for (int i = -cityLength; i <= cityLength; i++) {
-            glVertex3f(i, 0, -50);
-            glVertex3f(i, 0, 50);
-            glVertex3f(-50, 0, i);
-            glVertex3f(50, 0, i);
-        }
-    } glEnd();
+//    glBegin(GL_LINES); {
+//    	glColor3ub(50, 50, 50);
+//        for (int i = -cityLength; i <= cityLength; i++) {
+//            glVertex3f(i, 0, -50);
+//            glVertex3f(i, 0, 50);
+//            glVertex3f(-50, 0, i);
+//            glVertex3f(50, 0, i);
+//        }
+//    } glEnd();
     /*
      *	As noted above, we are done drawing with OpenGL Primitives, so we
      *	must turn lighting back on.
@@ -387,18 +400,53 @@ void renderScene()  {
 //
 ////////////////////////////////////////////////////////////////////////////////
 void myTimer (int value) {
+
+//cout << int(((wanderer->getX() + 50 + sin(wanderer->getTheta()) * 0.3) / 100 * bezierCurve::getResolution() + (wanderer->getZ() + 50) / 100) * bezierCurve::getResolution()) << endl;
+
+	// calculate surface normal at current location
+	Point point0 = surfacePoints[(int((wanderer->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((wanderer->getZ() + 50) / 100 * bezierCurve::getResolution()))];
+	Point point1 = surfacePoints[(int((wanderer->getX() + 50 + sin(wanderer->getTheta())) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((wanderer->getZ() + 50 + cos(wanderer->getTheta())) / 100 * bezierCurve::getResolution()))];
+	Point point2 = surfacePoints[(int((wanderer->getX() + 50 + sin(wanderer->getTheta() - M_PI / 2)) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((wanderer->getZ() + 50 + cos(wanderer->getTheta() - M_PI / 4) + 1) / 100 * bezierCurve::getResolution()))];
+//	std::cout << point0.getX() << " " <<  point0.getY() << " " << point0.getZ() << endl;
+//	std::cout << point1.getX() << " " <<  point1.getY() << " " << point1.getZ() << endl;
+//	std::cout << point2.getX() << " " <<  point2.getY() << " " << point2.getZ() << endl << endl;
+	Point a(point1.getX() - point0.getX(), point1.getY() - point0.getY(), point1.getZ() - point0.getZ());
+	Point b(point2.getX() - point0.getX(), point2.getY() - point0.getY(), point2.getZ() - point0.getZ());
+
+//	Point a(signbit(sin(wanderer->getTheta()) * (point1.getX() - point0.getX())), point1.getY() - point0.getY(), signbit(cos(wanderer->getTheta()) * (point1.getZ() - point0.getZ())));
+//	Point b(signbit(sin(wanderer->getTheta()) * (point2.getX() - point0.getX())), point2.getY() - point0.getY(), signbit(cos(wanderer->getTheta()) * (point2.getZ() - point0.getZ())));
+
+	Point cross(a.getY() * b.getZ() - a.getZ() * b.getY(), a.getZ() * b.getX() - a.getX() * b.getZ(), a.getX() * b.getY() - a.getY() * b.getX());
+
+	float mag = sqrt(cross.getX() * cross.getX() + cross.getY() * cross.getY() + cross.getZ() * cross.getZ());
+	Point norm(cross.getX() / mag, cross.getY() / mag, cross.getZ() / mag);
+
+	float newPhi = acos(norm.getY()) - M_PI / 2;
+	if (point0.getY() < point1.getY()) newPhi = M_PI - newPhi;
+	if (newPhi < 0) newPhi *= -1;
+	if (newPhi > M_PI) newPhi -= M_PI;
+	
+	if (!(newPhi != newPhi))
+		wanderer->rotate(wanderer->getTheta(), newPhi);
+
+
+//std::cout << int((wanderer->getZ() + 50) / 100 * bezierCurve::getResolution()) << " " << (int((wanderer->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((wanderer->getZ() + 50) / 100 * bezierCurve::getResolution())) << endl;
+
+//std::cout << norm.getY() << " " << acos(norm.getY()) << endl;
+//	std::cout << norm.getX() << " " <<  norm.getY() << " " << norm.getZ() << endl;
+
 	// Check which keys are down
     if (keys['w' - 'a'] == 1) {
     	wanderer->rotateLeftWheel(-0.2f);
     	wanderer->rotateRightWheel(-0.2f);
     	wanderer->move(wanderer->getX() + sin(wanderer->getTheta()) * 0.3,
-                    wanderer->getY(),
+					surfacePoints[(int((wanderer->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((wanderer->getZ() + 50) / 100 * bezierCurve::getResolution()))].getY(),
                     wanderer->getZ() + cos(wanderer->getTheta()) * 0.3);
     } if (keys['s' - 'a'] == 1) {
     	wanderer->rotateLeftWheel(0.2f);
     	wanderer->rotateRightWheel(0.2f);
         wanderer->move(wanderer->getX() + -sin(wanderer->getTheta()) * 0.3,
-                    wanderer->getY(),
+					surfacePoints[(int((wanderer->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((wanderer->getZ() + 50) / 100 * bezierCurve::getResolution()))].getY(),
                     wanderer->getZ() + -cos(wanderer->getTheta()) * 0.3);
     } if (keys['a' - 'a'] == 1) {
     	wanderer->rotate(wanderer->getTheta() + 0.03f, wanderer->getPhi());
@@ -533,6 +581,8 @@ int main (int argc, char **argv) {
 
     InputReader reader("input/infile.txt");
     bezierCurve petPath = reader.getPetPath();
+
+	surfacePoints = reader.getPoints();
 
     // initialize the hero vehicles
     antikythera = new Antikythera();

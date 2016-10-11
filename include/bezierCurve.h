@@ -22,7 +22,7 @@ using namespace std;
 
 class bezierCurve : public drawable {
 
-    public:
+public:
     bezierCurve();
     bezierCurve(vector<Point>& pointy);
     bezierCurve(float r, float g, float b);
@@ -36,9 +36,9 @@ class bezierCurve : public drawable {
     unsigned int getSize();
     Point getNextCordinate();
     void arcLengthParam();
-    int getResolution();
+    static int getResolution() { return resolution; }
     
-    private:
+private:
     void setDefaults();
     float lineR,lineG,lineB;
     float cageR,cageG,cageB;
@@ -48,9 +48,9 @@ class bezierCurve : public drawable {
     vector<Point> curvePoints;
     unsigned int location;
     void caculatePoints();
-    int resolution;
+    static int resolution;
     
-    protected:
+protected:
     bool pointsVis;
     bool cageVis;
     bool curveVis;

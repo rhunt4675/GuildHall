@@ -214,6 +214,9 @@ Direction bezierCurve::getTanget(){
 
 
 Direction bezierCurve::getArcTanget(){
+    if (arcLengthCurve.empty()){
+        arcLengthParam();
+    }
     Point a = arcLengthCurve[arcLocation];
     Point b;
     if (arcLocation == arcLengthCurve.size()-1){

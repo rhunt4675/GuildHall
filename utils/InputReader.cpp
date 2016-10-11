@@ -8,7 +8,7 @@ InputReader::InputReader(string infile) {
 	// Gets surface of world
 	getline(inputData, line);
 	int numSurfaces = stoi(line);
-	vector<Point> surfacePoints;
+	vector<Point> points;
 	for (int i = 0; i < numSurfaces; i++) {
 		for (int j = 0; j < 16; j++) {
 			getline(inputData, line);
@@ -16,10 +16,10 @@ InputReader::InputReader(string infile) {
 			ss << line;
 			int x, y, z;
 			ss >> x >> y >> z;
-			surfacePoints.push_back(Point(x, y, z));
+			points.push_back(Point(x, y, z));
 		}
 	}
-	calcSurface(surfacePoints);
+	calcSurface(points);
 
 	// Gets pet curve
 	getline(inputData, line);
@@ -62,17 +62,17 @@ void InputReader::calcSurface(vector<Point> points) {
 		for (int j = 0; j < 4; j++) {
 			vector<Point> p;
 			for (int k = 0; k < 4; k++) {
-				p.push_back(points[i * 16 + k]);
+				p.push_back(points[i * 16 + j * 4 + k]);
 			}
 			curves[j] = bezierCurve(p);
 		}
-		for (int j = 0; j < curves[0].getResolution(); j++) {
+		for (int j = 0; j < bezierCurve::getResolution(); j++) {
 			vector<Point> p;
 			for (int k = 0; k < 4; k++) {
 				p.push_back(curves[k].getNextCordinate());
 			}
 			bezierCurve curve(p);
-			for (int k = 0; k < curve.getResolution(); k++) {
+			for (int k = 0; k < bezierCurve::getResolution(); k++) {
 				surfacePoints.push_back(curve.getNextCordinate());
 			}
 		}

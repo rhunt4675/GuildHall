@@ -1,5 +1,7 @@
 #include "../include/bezierCurve.h"
 
+int bezierCurve::resolution = 300;
+
 bezierCurve::bezierCurve() {
     setDefaults();
 }
@@ -28,8 +30,6 @@ void bezierCurve::setDefaults(){
     cageG = 1;
     cageB = .2;
 
-    resolution = 300;
-    
     curveVis = false;
     pointsVis = false;
     cageVis = false;
@@ -59,6 +59,7 @@ unsigned int bezierCurve::getSize(){
 
 void bezierCurve::caculatePoints(){
     curvePoints.clear();
+    location = 0;
     //std::cout<<"BEGIN"<<std::endl;
     float step=1.0/resolution;
     for(unsigned int start = 0; start + 4 <= controlPoints.size(); start += 3){
@@ -133,6 +134,3 @@ void bezierCurve::draw(){
     glPopMatrix();
 }
 
-int bezierCurve::getResolution() {
-	return resolution;
-}

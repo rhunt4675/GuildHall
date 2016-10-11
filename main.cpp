@@ -51,6 +51,8 @@ static int cityLength = 50;                 // city boundaries
 
 Camera camera;								// world camera
 Hero *antikythera, *diomedes, *asterion;    // hero vehicles
+
+vector<Point> surfacePoints;
 //Sprite sprite;								// hero's sprite
 
 //std::vector<Point> points;					// Bezier control points
@@ -80,16 +82,28 @@ void drawGrid() {
      */
     glDisable( GL_LIGHTING );
 
+	glColor3ub(50, 50, 50);
+
+	int res = bezierCurve::getResolution();
+	for (unsigned int i = 0; i < surfacePoints.size() / res; i++) {
+		glBegin(GL_QUAD_STRIP);
+		for (int j = 0; j < res / 2; j++) {
+			glVertex3f(surfacePoints[i * res + 2 * j].getX(), surfacePoints[i * res + 2 * j].getY(), surfacePoints[i * res + 2 * j].getZ());
+			glVertex3f(surfacePoints[i * res + 2 * j + res].getX(), surfacePoints[i * res + 2 * j + res].getY(), surfacePoints[i * res + 2 * j + res].getZ());
+		}
+		glEnd();
+	}
+
     /** TODO #3: DRAW A GRID IN THE XZ-PLANE USING GL_LINES **/
-    glBegin(GL_LINES); {
-    	glColor3ub(50, 50, 50);
-        for (int i = -cityLength; i <= cityLength; i++) {
-            glVertex3f(i, 0, -50);
-            glVertex3f(i, 0, 50);
-            glVertex3f(-50, 0, i);
-            glVertex3f(50, 0, i);
-        }
-    } glEnd();
+//    glBegin(GL_LINES); {
+//    	glColor3ub(50, 50, 50);
+//        for (int i = -cityLength; i <= cityLength; i++) {
+//            glVertex3f(i, 0, -50);
+//            glVertex3f(i, 0, 50);
+//            glVertex3f(-50, 0, i);
+//            glVertex3f(50, 0, i);
+//        }
+//    } glEnd();
     /*
      *	As noted above, we are done drawing with OpenGL Primitives, so we
      *	must turn lighting back on.
@@ -428,6 +442,8 @@ int main (int argc, char **argv) {
 
     InputReader reader("input/infile.txt");
     bezierCurve petPath = reader.getPetPath();
+
+	surfacePoints = reader.getPoints();
 
     // initialize the hero vehicles
     antikythera = new Antikythera();

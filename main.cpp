@@ -55,6 +55,7 @@ Hero *antikythera, *diomedes, *asterion;    // hero vehicles
 Hero *wanderer, *camerafollower, *fol1, *fol2;
 bezierCurve heroPath1, heroPath2;
 Point prevPoint1, prevPoint2;
+vector<Object> objects;
 vector<Point> surfacePoints;
 //Sprite sprite;								// hero's sprite
 
@@ -122,30 +123,34 @@ void drawGrid() {
 //  Function to draw buildings on top of the XZ-Plane using GLUT privitives
 //
 ////////////////////////////////////////////////////////////////////////////////
-void drawTrees() {
-    for (int i = -cityLength; i < cityLength; i++) {
-        for (int j = -cityLength; j < cityLength; j++) {
-            if (getRand() < 0.001f) {
-                int height = getRand() * 5 + 10;
+void drawObjects() {
+    for (unsigned int i = 0; i < objects.size(); i++) {
+        if (objects[i].type == "tree") {
+            int height = getRand() * 5 + 10;
 
-                glPushMatrix();
-                glColor3ub(87, 35, 7);
-                glTranslatef(i, height / 2.0, j);
-                glScalef(1, height, 1);
-                glutSolidCube(1);
-                glPopMatrix();
+			Point loc = objects[i].location;
 
-                glPushMatrix();
-                glColor3ub(53, 98, 68);
-                glTranslatef(i, height, j);
-                glRotatef(-90, 1, 0, 0);
-                glutSolidCone(3, 5, 20, 20);
-                glTranslatef(0, 0, -3);
-                glutSolidCone(3, 5, 20, 20);
-				glTranslatef(0, 0, -3);
-                glutSolidCone(3, 5, 20, 20);
-                glPopMatrix();
-            }
+			glPushMatrix(); glScalef(objects[i].size, objects[i].size, objects[i].size);
+
+            glPushMatrix();
+            glColor3ub(87, 35, 7);
+            glTranslatef(loc.getX(), height / 2.0, loc.getZ());
+            glScalef(1, height, 1);
+            glutSolidCube(1);
+            glPopMatrix();
+
+            glPushMatrix();
+            glColor3ub(53, 98, 68);
+            glTranslatef(loc.getX(), height, loc.getZ());
+            glRotatef(-90, 1, 0, 0);
+            glutSolidCone(3, 5, 20, 20);
+            glTranslatef(0, 0, -3);
+            glutSolidCone(3, 5, 20, 20);
+			glTranslatef(0, 0, -3);
+            glutSolidCone(3, 5, 20, 20);
+            glPopMatrix();
+
+			glPopMatrix();
         }
     }
 }
@@ -167,7 +172,7 @@ void generateEnvironmentDL() {
     glNewList(environmentDL, GL_COMPILE);
     
     drawGrid();
-    drawTrees();
+    drawObjects();
     glEndList();
 }
 
@@ -489,7 +494,7 @@ void myTimer (int value) {
 	Direction tangent = heroPath1.getArcTanget();
 	Point follower = heroPath1.getArcCordinate();
 	fol1->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
-//	fol1->rotate(tangent.getPhi(), tangent.getTheta());
+	fol1->rotate(tangent.getPhi(), tangent.getTheta());
 
 	tangent = heroPath2.getTanget();
 	follower = heroPath2.getNextCordinate();
@@ -594,6 +599,7 @@ int main (int argc, char **argv) {
     heroPath1 = reader.getHeroPath();
 	heroPath2 = reader.getHeroPath();
 	surfacePoints = reader.getPoints();
+	objects = reader.getObjects();
 
     // initialize the hero vehicles
     antikythera = new Antikythera();

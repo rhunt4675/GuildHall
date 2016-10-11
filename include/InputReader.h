@@ -25,7 +25,6 @@ class InputReader {
 		void calcSurface(vector<Point>);
 
 	public:
-		bezierCurve getPetPath() {return petPath;}
 		bezierCurve getHeroPath() {return heroPath;}
 		vector<Point> getPoints() {return surfacePoints;}
 		InputReader(string infile);

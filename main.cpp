@@ -53,6 +53,8 @@ static int cityLength = 50;                 // city boundaries
 Camera camera, fpcamera;					// world camera
 Hero *antikythera, *diomedes, *asterion;    // hero vehicles
 Hero *wanderer, *camerafollower;
+bezierCurve heroPath1, heroPath2;
+Point prevPoint1, prevPoint2;
 vector<Point> surfacePoints;
 //Sprite sprite;								// hero's sprite
 
@@ -353,8 +355,8 @@ void renderScene()  {
     glCallList(environmentDL);
 
 	// Display the Cars
-	antikythera->draw();
 	diomedes->draw();
+	antikythera->draw();
 	asterion->draw();
 
     // Optionally display 1st Person Camera
@@ -420,22 +422,15 @@ void renderScene()  {
 ////////////////////////////////////////////////////////////////////////////////
 void myTimer (int value) {
 
-//cout << int(((wanderer->getX() + 50 + sin(wanderer->getTheta()) * 0.3) / 100 * bezierCurve::getResolution() + (wanderer->getZ() + 50) / 100) * bezierCurve::getResolution()) << endl;
-
 	// calculate surface normal at current location
 	Point point0 = surfacePoints[(int((wanderer->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((wanderer->getZ() + 50) / 100 * bezierCurve::getResolution()))];
 	Point point1 = surfacePoints[(int((wanderer->getX() + 50 + sin(wanderer->getTheta())) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((wanderer->getZ() + 50 + cos(wanderer->getTheta())) / 100 * bezierCurve::getResolution()))];
 	Point point2 = surfacePoints[(int((wanderer->getX() + 50 + sin(wanderer->getTheta() - M_PI / 2)) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((wanderer->getZ() + 50 + cos(wanderer->getTheta() - M_PI / 4) + 1) / 100 * bezierCurve::getResolution()))];
-//	std::cout << point0.getX() << " " <<  point0.getY() << " " << point0.getZ() << endl;
-//	std::cout << point1.getX() << " " <<  point1.getY() << " " << point1.getZ() << endl;
-//	std::cout << point2.getX() << " " <<  point2.getY() << " " << point2.getZ() << endl << endl;
+
 	Direction a(point1, point0);
 	Direction b(point2,point0);
 
-//	Point a(signbit(sin(wanderer->getTheta()) * (point1.getX() - point0.getX())), point1.getY() - point0.getY(), signbit(cos(wanderer->getTheta()) * (point1.getZ() - point0.getZ())));
-//	Point b(signbit(sin(wanderer->getTheta()) * (point2.getX() - point0.getX())), point2.getY() - point0.getY(), signbit(cos(wanderer->getTheta()) * (point2.getZ() - point0.getZ())));
-
-        Direction cross = a * b;
+    Direction cross = a * b;
 
 	float newPhi = acos(cross.getDirY()) - M_PI / 2;
 	if (point0.getY() < point1.getY()) newPhi = M_PI - newPhi;
@@ -444,12 +439,6 @@ void myTimer (int value) {
 	
 	if (!(newPhi != newPhi))
 		wanderer->rotate(wanderer->getTheta(), newPhi);
-
-
-//std::cout << int((wanderer->getZ() + 50) / 100 * bezierCurve::getResolution()) << " " << (int((wanderer->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((wanderer->getZ() + 50) / 100 * bezierCurve::getResolution())) << endl;
-
-//std::cout << norm.getY() << " " << acos(norm.getY()) << endl;
-//	std::cout << norm.getX() << " " <<  norm.getY() << " " << norm.getZ() << endl;
 
 	// Check which keys are down
     if (keys['w' - 'a'] == 1) {
@@ -495,6 +484,17 @@ void myTimer (int value) {
     wanderer->move(wanderer->getX() > cityLength - 5 ? cityLength - 5 : wanderer->getX(),
                 wanderer->getY(),
                 wanderer->getZ() > cityLength - 5 ? cityLength - 5 : wanderer->getZ());
+
+	// Update follower positions
+	Point follower = heroPath1.getNextCordinate();
+	antikythera->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
+//	Direction tangent = heroPath1.getTangent();
+//	antikythera->rotate(tangent.getTheta(), tangent.getPhi());
+	follower = heroPath2.getNextCordinate();
+	asterion->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
+//	tangent = heroPath2.getTangent();
+//	asterion->rotate(tangent.getTheta(), tangent.getPhi());
+
 
     // Update camera and redraw
     antikythera->animate();
@@ -589,7 +589,8 @@ int main (int argc, char **argv) {
 
 
     InputReader reader("input/infile.txt");
-    bezierCurve petPath = reader.getPetPath();
+    heroPath1 = reader.getHeroPath();
+	heroPath2 = reader.getHeroPath();
 	surfacePoints = reader.getPoints();
 
     // initialize the hero vehicles
@@ -597,12 +598,16 @@ int main (int argc, char **argv) {
     diomedes = new Diomedes();
     asterion = new Asterion();
 
-    // move the hero vehicles
-    antikythera->move(0, 0, 0);
-    antikythera->rotate(0, M_PI / 2);
+    // move the wanderer vehicles
     diomedes->move(10, 0, 0);
     diomedes->rotate(0, M_PI / 2);
-    asterion->move(-10, 0, 0);
+	// move the hero vehicles
+	Point init = heroPath1.getNextCordinate();
+    antikythera->move(init.getX(), init.getY(), init.getZ());
+    antikythera->rotate(0, M_PI / 2);
+	for (int i = 0; i < 20; i++) heroPath2.getNextCordinate();		// offsets the cars
+	init = heroPath2.getNextCordinate();
+    asterion->move(init.getX(), init.getY(), init.getZ());
     asterion->rotate(0, M_PI / 2);
 
     // setup wanderer and camera follower

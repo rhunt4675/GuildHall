@@ -201,17 +201,22 @@ void bezierCurve::draw(){
 
 
 Direction bezierCurve::getTanget(){
-    Point a = curvePoints[location];
-    Point b;
+    Point a,b;
+    if (location == (0)){
+        a = curvePoints[curvePoints.size()-1];
+    }
+    else {
+        a = curvePoints[location-1];
+    }
+
     if (location == (curvePoints.size() -1)){
-        b = curvePoints[0];
+        a = curvePoints[0];
     }
     else {
         b = curvePoints[location + 1];
     }
-    Direction d(a,b);
-	d.normalize(d.getDirX(), d.getDirY(), d.getDirZ());
-	return d;
+    Direction d(b,a);
+    return d;
 }
 
 
@@ -219,15 +224,19 @@ Direction bezierCurve::getArcTanget(){
     if (arcLengthCurve.empty()){
         arcLengthParam();
     }
-    Point a = arcLengthCurve[arcLocation];
-    Point b;
+    Point a,b;
+    if (arcLocation == 0){
+        b = arcLengthCurve[arcLengthCurve.size()-1];
+    }
+    else {
+        b = arcLengthCurve[arcLocation - 1];
+    }
     if (arcLocation == arcLengthCurve.size()-1){
         b = arcLengthCurve[0];
     }
     else {
         b = arcLengthCurve[arcLocation + 1];
     }
-    Direction d(a,b);
-	d.normalize(d.getDirX(), d.getDirY(), d.getDirZ());
+    Direction d(b,a);
 	return d;
 }

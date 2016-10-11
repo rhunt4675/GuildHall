@@ -31,9 +31,6 @@ class Antikythera : public Hero {
         float anglePitch;
         void drawHero();
 
-        //AntikytheraPet kitty;
-        float posX, posY, posZ, phi, theta;
-        
         //context* worldContext;
         
         //Movement and animation speed paramaters

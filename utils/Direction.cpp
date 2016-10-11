@@ -1,11 +1,6 @@
 #include "../include/Direction.h"
 
-Direction::Direction(float startTheta, float startPhi, float startLength){
-    angleTheta = startTheta;
-    anglePhi = startPhi;
-    length = startLength;
-    recomputeOrientation();
-}
+
 
 Direction::Direction(float startTheta, float startPhi){
     angleTheta = startTheta;
@@ -19,7 +14,42 @@ Direction::Direction(){
     anglePhi = 0;
     length = 1;
     recomputeOrientation();
-};
+}
+
+Direction::Direction(Point a, Point b){
+    dirX = a.getX() - b.getX();
+    dirY = a.getY() - b.getY();
+    dirZ = a.getZ() - b.getZ();
+    
+    recomputeAngle();
+}
+
+Direction::Direction(float deltaX, float deltaY, float deltaZ){
+    dirX = deltaX;
+    dirY = deltaY;
+    dirZ = deltaZ;
+    
+    recomputeAngle();
+}
+
+
+void Direction::recomputeAngle(){
+    length = dirX * dirX + dirY * dirY + dirZ * dirZ;
+    length = sqrt(length);
+    dirX /= length;
+    dirY /= length;
+    dirZ /= length;
+
+
+    //TODO: Figure out and implement this caculation
+   angleTheta = 0;
+   anglePhi = 0;
+
+}
+
+Direction operator* (Direction a, Direction b){
+    return Direction(a.getDirY() * b.getDirZ() - a.getDirZ() * b.getDirY(), a.getDirZ() * b.getDirX() - a.getDirX() * b.getDirZ(), a.getDirX() * b.getDirY() - a.getDirY() * b.getDirX());    
+}
 
 void Direction::rotate(float theta, float phi){
     angleTheta = theta;
@@ -64,11 +94,11 @@ void Direction::recomputeOrientation() {
 
 
 
-    double normalize = dirX * dirX + dirY * dirY + dirZ * dirZ;
-    normalize = sqrt(normalize);
-    dirX /= normalize;
-    dirY /= normalize;
-    dirZ /= normalize;
+    double size = dirX * dirX + dirY * dirY + dirZ * dirZ;
+    size = sqrt(size);
+    dirX /= size;
+    dirY /= size;
+    dirZ /= size;
 }
 
 void Direction::change_angle(float theta, float phi){
@@ -96,4 +126,17 @@ void Direction::change_length(float delta){
     if(length < 0){
         length = 0;
     }
+}
+
+void Direction::normalize(float x, float y, float z){
+    dirX = x;
+    dirY = y;
+    dirZ = z;
+    length = dirX * dirX + dirY * dirY + dirZ * dirZ;
+    length = sqrt(length);
+    dirX /= length;
+    dirY /= length;
+    dirZ /= length;
+
+
 }

@@ -11,19 +11,6 @@ Point operator+( Point a, Point b ) {
     return Point( a.getX() + b.getX(), a.getY() + b.getY(), a.getZ() + b.getZ());
 }
 
-Point operator-( Point p, Direction d){
-    return Point( p.getX() - d.getVecX(), p.getY() - d.getVecY(), p.getZ() - d.getVecZ() );
-}
-
-Point operator+( Point p, Direction d){
-    return Point( p.getX() + d.getVecX(), p.getY() + d.getVecY(), p.getZ() + d.getVecZ() );
-}
-
-Point operator+(Direction d, Point p){
-    return Point( p.getX() + d.getVecX(), p.getY() + d.getVecY(), p.getZ() + d.getVecZ() );
-}
-
-
 void Point::move(float x, float y, float z){
     posX = x;
     posY = y;

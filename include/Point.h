@@ -1,7 +1,5 @@
 #ifndef cordinate_header
 #define cordinate_header
-#include "Direction.h"
-
 
 class Point {
     public:
@@ -24,7 +22,5 @@ class Point {
 Point operator*( Point p, float f );
 Point operator*( float f, Point p );
 Point operator+( Point a, Point b );
-Point operator-( Point p, Direction d);
-Point operator+( Point p, Direction d);
-Point operator+( Direction d, Point p);
+Point operator-( Point a, Point b );
 #endif

@@ -1,6 +1,7 @@
 #ifndef direction_header
 #define direction_header
 #include <math.h>
+#include"Point.h"
 class Direction {
     public:
         float getDirX();
@@ -15,13 +16,17 @@ class Direction {
         void change_angle(float theta, float phi);
         void rotate(float theta, float phi);
         void change_length(float delta);
-        Direction(float startTheta, float startPhi, float startLength);
+        void normalize(float x, float y, float z);
         Direction();
         Direction(float startTheta, float startPhi);
+        Direction(Point a, Point b);
+        Direction(float deltaX, float deltaY, float deltaZ);
     protected:
         void recomputeOrientation();
+        void recomputeAngle();
         float dirX, dirY, dirZ;
         float length;
         float angleTheta, anglePhi;
 };
+Direction operator*(Direction a, Direction b);
 #endif

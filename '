@@ -25,7 +25,6 @@ private:
 	//float dirX, dirY, dirZ;
 	bool arcBall;
         Direction upVec;
-        Point car;
 
 public:
 	// Constructor
@@ -33,9 +32,10 @@ public:
 		//x = y = z = 0;
 		//rho = theta = phi = 0;
 		rho = 0;
+                upVec(0,0,0);
                 //upX = upY = upZ = 0;
-		//carX = carY = carZ = 0;
-		//dirX = dirY = dirZ = 0;
+		carX = carY = carZ = 0;
+		dirX = dirY = dirZ = 0;
 		arcBall = true;
 	};
 
@@ -58,11 +58,10 @@ public:
 
 	// Update the car position
 	void updateCarPosition(float x, float y, float z);
-	void updateCarPosition(Point pos);
+	void updateCarPosition(float (&pos)[3]);
 
 	// Update camera up vector
 	void updateUpVector(float x, float y, float z);
-	void updateUpVector(Direction up);
 
 	// Switch camera modes
 	void enableFreeCam();

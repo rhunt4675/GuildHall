@@ -1,58 +1,63 @@
 #include "../include/Camera.h"
 
 void Camera::updateOrientation(float rho, float theta, float phi) {
-    x = (rho * sin(theta) * sin(phi));
-    y = (-rho * cos(phi));
-    z = (-rho * cos(theta) * sin(phi));
-    this->rho = rho; this->theta = theta; this->phi = phi;
+    posX = (rho * sin(theta) * sin(phi));
+    posY = (-rho * cos(phi));
+    posZ = (-rho * cos(theta) * sin(phi));
+    this->rho = rho; this->angleTheta = theta; this->anglePhi = phi;
 }
 
 void Camera::updatePosition(float x, float y, float z, float dirX, float dirY, float dirZ) {
-	this->x = x;
-	this->y = y;
-	this->z = z;
+	this->posX = x;
+	this->posY = y;
+	this->posZ = z;
 	this->dirX = dirX;
 	this->dirY = dirY;
 	this->dirZ = dirZ;
 }
 
 void Camera::updateCarPosition(float x, float y, float z) {
-	carX = x;
-	carY = y;
-	carZ = z;
+	car.move(x,y,z);
 }
 
+void Camera::updateCarPosition(Point pos) {
+        car = pos;
+}
 void Camera::updateUpVector(float x, float y, float z) {
-	upX = x;
-	upY = y;
-	upZ = z;
+	upVec.normalize(x,y,z);
+}
+void Camera::updateUpVector(Direction up) {
+    upVec = up;
 }
 
 void Camera::doLookAt() {
     glLoadIdentity();
 
     if (arcBall)
-		gluLookAt( x + carX, y + carY, z + carZ,
-				carX, carY, carZ,
-				upX, upY, upZ);
+		gluLookAt( posX + car.getX(), posY + car.getY(), posZ + car.getZ(),
+				car.getX(), car.getY(), car.getZ(),
+				upVec.getDirX(), upVec.getDirY(), upVec.getDirZ());
 	else
-		gluLookAt( x, y, z,
-				x + dirX, y + dirY, z + dirZ,
-				upX, upY, upZ);
+		gluLookAt( posX, posY, posZ,
+				posX + dirX, posY + dirY, posZ + dirZ,
+				upVec.getDirX(), upVec.getDirY(), upVec.getDirZ());
 }
 
 void Camera::enableFreeCam() {
-	dirX = -x;
-	dirY = -y;
-	dirZ = -z;
+    normalize(-posX,-posY,-posZ);
+    /*
+        dirX = -posX;
+	dirY = -posY;
+	dirZ = -posZ;
 	
 	float magnitude = sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
 	dirX /= magnitude; dirY /= magnitude; dirZ /= magnitude;
 
+        */
 	if (arcBall) {
-		x += carX;
-		y += carY;
-		z += carZ;
+		posX += car.getX();
+		posY += car.getY();
+		posZ += car.getZ();
 	}
 
 	arcBall = false;

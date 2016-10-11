@@ -22,13 +22,8 @@ bezierCurve::bezierCurve(float r, float g, float b) {
 }
 
 float bezierCurve::distance(Point& start, Point& end){
-    float dirX = start.getX() - end.getX();
-    float dirY = start.getY() - end.getY();
-    float dirZ = start.getZ() - end.getZ();
-
-    float length = dirX*dirX + dirY*dirY + dirZ*dirZ;
-    length = sqrt(length);
-    return length;
+    Direction vec(start,end);
+    return vec.getLength();
 }
 
 void bezierCurve::setDefaults(){

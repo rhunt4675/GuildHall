@@ -410,18 +410,15 @@ void myTimer (int value) {
 //	std::cout << point0.getX() << " " <<  point0.getY() << " " << point0.getZ() << endl;
 //	std::cout << point1.getX() << " " <<  point1.getY() << " " << point1.getZ() << endl;
 //	std::cout << point2.getX() << " " <<  point2.getY() << " " << point2.getZ() << endl << endl;
-	Point a(point1.getX() - point0.getX(), point1.getY() - point0.getY(), point1.getZ() - point0.getZ());
-	Point b(point2.getX() - point0.getX(), point2.getY() - point0.getY(), point2.getZ() - point0.getZ());
+	Direction a(point1, point0);
+	Direction b(point2,point0);
 
 //	Point a(signbit(sin(wanderer->getTheta()) * (point1.getX() - point0.getX())), point1.getY() - point0.getY(), signbit(cos(wanderer->getTheta()) * (point1.getZ() - point0.getZ())));
 //	Point b(signbit(sin(wanderer->getTheta()) * (point2.getX() - point0.getX())), point2.getY() - point0.getY(), signbit(cos(wanderer->getTheta()) * (point2.getZ() - point0.getZ())));
 
-	Point cross(a.getY() * b.getZ() - a.getZ() * b.getY(), a.getZ() * b.getX() - a.getX() * b.getZ(), a.getX() * b.getY() - a.getY() * b.getX());
+        Direction cross = a * b;
 
-	float mag = sqrt(cross.getX() * cross.getX() + cross.getY() * cross.getY() + cross.getZ() * cross.getZ());
-	Point norm(cross.getX() / mag, cross.getY() / mag, cross.getZ() / mag);
-
-	float newPhi = acos(norm.getY()) - M_PI / 2;
+	float newPhi = acos(cross.getDirY()) - M_PI / 2;
 	if (point0.getY() < point1.getY()) newPhi = M_PI - newPhi;
 	if (newPhi < 0) newPhi *= -1;
 	if (newPhi > M_PI) newPhi -= M_PI;
@@ -466,10 +463,10 @@ void myTimer (int value) {
         float dirY = camera.getDirY();
         float dirZ = camera.getDirZ();
 
-        if (keys['k' - 'a'] == 1) camera.updatePosition(camera.getX() + dirX, camera.getY() + dirY, camera.getZ() + dirZ, dirX, dirY, dirZ);
-        if (keys['i' - 'a'] == 1) camera.updatePosition(camera.getX() - dirX, camera.getY() - dirY, camera.getZ() - dirZ, dirX, dirY, dirZ);
-        if (keys['j' - 'a'] == 1) camera.updatePosition(camera.getX(), camera.getY(), camera.getZ(), dirX, dirY, dirZ);
-        if (keys['l' - 'a'] == 1) camera.updatePosition(camera.getX(), camera.getY(), camera.getZ(), dirX, dirY, dirZ);
+        if (keys['k' - 'a'] == 1) camera.change_pos(dirX, dirY, dirZ);
+        if (keys['i' - 'a'] == 1) camera.change_pos(-dirX, -dirY,-dirZ);
+        if (keys['j' - 'a'] == 1) camera.change_pos(0,0,0);
+        if (keys['l' - 'a'] == 1) camera.change_pos(0, 0, 0);
     }
 
     // Check car bounds
@@ -486,8 +483,8 @@ void myTimer (int value) {
     asterion->animate();
 
 	// Update Cameras
-    camera.updateCarPosition(camerafollower->getX(), camerafollower->getY(), camerafollower->getZ());
-    fpcamera.updatePosition(camerafollower->getX(), camerafollower->getY() + 5, camerafollower->getZ(), camerafollower->getVecX(), camerafollower->getVecY(), camerafollower->getVecZ());
+    camera.updateCarPosition(*camerafollower);
+    fpcamera.updatePosition(camerafollower->getX(), camerafollower->getY() + 5, camerafollower->getZ(), camerafollower->getDirX(), camerafollower->getDirY(), camerafollower->getDirZ());
 	glutPostRedisplay();
 	glutTimerFunc(20, myTimer, 0);
 }
@@ -596,7 +593,7 @@ int main (int argc, char **argv) {
 
     // give the camera a scenic starting point.
     camera.updateOrientation(50.f, 0.f, M_PI * 3.f / 4.f);
-    camera.updateCarPosition(camerafollower->getX(), camerafollower->getY(), camerafollower->getZ());
+    camera.updateCarPosition(*camerafollower);
     camera.updateUpVector(0, 1, 0);
 
     // give the fpcamera a scenic starting point

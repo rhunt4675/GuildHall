@@ -1,6 +1,7 @@
 #ifndef curve_header
 #define curve_header
 
+#include"Direction.h"
 #include"Point.h"
 #include"drawable.h"
 #include <vector>

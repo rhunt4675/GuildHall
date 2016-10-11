@@ -9,16 +9,17 @@
 #include <vector>
 #include <iostream>
 
+struct Object {
+	string type;
+	Point location;
+	float size;
+};
+
+
 class InputReader {
 	private:
 		bezierCurve petPath;
 		bezierCurve heroPath;
-		struct Object {
-			string type;
-			Point location;
-			float xDir, yDir, zDir;
-			float size;
-		};
 		vector<Object> objs;
 		vector<Point> surfacePoints;
 
@@ -27,6 +28,7 @@ class InputReader {
 	public:
 		bezierCurve getHeroPath() {return heroPath;}
 		vector<Point> getPoints() {return surfacePoints;}
+		vector<Object> getObjects() {return objs;}
 		InputReader(string infile);
 	
 };

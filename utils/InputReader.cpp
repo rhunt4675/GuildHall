@@ -36,6 +36,20 @@ InputReader::InputReader(string infile) {
 	heroPath = bezierCurve(heroCurvePoints);
 	
 	// TODO: Gets object info
+	getline(inputData, line);
+	int numObjs = atoi(line.c_str());
+	objs.clear();
+	for (int j = 0; j < numObjs; j++) {
+		getline(inputData, line);
+		ss.clear(); ss.str("");
+		ss << line;
+		Object o;
+		float x, y, z;
+		ss >> o.type >> x >> y >> z >> o.size;
+		Point p(x, y, z);
+		o.location = p;
+		objs.push_back(o);
+	}
 
 	inputData.close();
 }

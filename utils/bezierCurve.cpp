@@ -19,6 +19,16 @@ bezierCurve::bezierCurve(float r, float g, float b) {
     lineB = b;
 }
 
+float bezierCurve::distance(Point& start, Point& end){
+    float dirX = start.getX() - end.getX();
+    float dirY = start.getY() - end.getY();
+    float dirZ = start.getZ() - end.getZ();
+
+    float length = dirX*dirX + dirY*dirY + dirZ*dirZ;
+    length = sqrt(length);
+    return length;
+}
+
 void bezierCurve::setDefaults(){
     lineR = 0;
     lineG = 0;
@@ -29,6 +39,8 @@ void bezierCurve::setDefaults(){
     cageB = .2;
 
     resolution = 300;
+    
+    arcLocation = 0;
     
     curveVis = false;
     pointsVis = false;
@@ -42,13 +54,18 @@ void bezierCurve::addPoint(ControlPoint pointy){
 }
 
 
+Point bezierCurve::linearInterpolation(Point a, Point b, float t){
+	Point p = (1-t)*a + t*b;
+	return p;
+}
+
 Point bezierCurve::evaluateBezierCurve( ControlPoint p0, ControlPoint p1, ControlPoint p2, ControlPoint p3, float t ) {
-    Point q0 = (1-t)*p0 + t*p1;
-    Point q1 = (1-t)*p1 + t*p2;
-    Point q2 = (1-t)*p2 + t*p3;
-    Point r0 = (1-t)*q0 + t*q1;
-    Point r1 = (1-t)*q1 + t*q2;
-    Point p =  (1-t)*r0 + t*r1;
+    Point q0 = linearInterpolation(p0,p1,t);
+    Point q1 = linearInterpolation(p1,p2,t);
+    Point q2 = linearInterpolation(p2,p3,t);
+    Point r0 = linearInterpolation(q0,q1,t);
+    Point r1 = linearInterpolation(q1,q2,t);
+    Point p =  linearInterpolation(r0,r1,t);
     return p;
 }
 
@@ -78,11 +95,62 @@ Point bezierCurve::getNextCordinate(){
     return curvePoints[location++];
 }
 
-void arcLengthParam(){
-    
-
+Point bezierCurve::getArcCordinate(){
+    if (arcLengthCurve.empty()){
+        arcLengthParam();
+    }
+    if (arcLocation >= arcLengthCurve.size()){
+        arcLocation = 0;
+    }
+    return arcLengthCurve[arcLocation++];
 }
 
+void bezierCurve::arcLengthParam(){
+	float targetLength = distance(curvePoints[1], curvePoints[0]);
+	unsigned int pointNum = curvePoints.size();
+        double currentLength = 0;
+        Point lastPoint;
+	arcLengthCurve.push_back(curvePoints[0]);
+	arcLengthCurve.push_back(curvePoints[1]);
+        lastPoint = curvePoints[1];
+        unsigned int point = 2;
+        bool done = false;
+	while (!done){
+            float segmentLength = distance(lastPoint,curvePoints[point]);
+            if (targetLength == (segmentLength + currentLength)){
+                arcLengthCurve.push_back(curvePoints[point]);
+                currentLength = 0;
+                lastPoint = curvePoints[point++];
+            }
+            else if ((segmentLength + currentLength) < targetLength) {
+                currentLength += segmentLength;
+                lastPoint = curvePoints[point++];
+            }
+            else {
+                float neededLength = targetLength - currentLength;
+                float t = neededLength / segmentLength;
+                //std::cout<<"State[ "<<"Segment:("<<point-1<<", "<<point<<")  Length:("<<targetLength<<", "<<currentLength<<", "<<segmentLength<<", "<<neededLength<<")  T: "<<t<<" ]"<<std::endl;
+                Point p = linearInterpolation(lastPoint,curvePoints[point],t);
+                arcLengthCurve.push_back(p);
+                currentLength = 0;
+                lastPoint = p;
+            }
+            if (point >= pointNum){
+                done = true;
+            }
+        }
+}
+
+
+bool bezierCurve::threshold(float a, float b){
+    double temp = a-b;
+    temp *= temp;
+    //std::cout<<"Comparing: "<<a<<",  "<<b<<", and r^2 of "<<temp<<std::endl;
+    if (temp < .00001){
+        return true;
+    }
+    return false;
+}
 
 void bezierCurve::tooglePointVis(){
     pointsVis = !pointsVis;

@@ -146,8 +146,3 @@ $(TARGET): $(OBJECTS)
 	$(CXX) $(CFLAGS) $(INCPATH) -o $@ $^ $(LIBPATH) $(LIBS)
 
 
-# DEPENDENCIES
-main.o: main.cpp include/Antikythera.h include/Point.h \
- include/Direction.h include/context.h include/AntikytheraPet.h \
- include/drawable.h include/bezierCurve.h include/ControlPoint.h \
- include/Direction.h include/bezierCurveReader.h

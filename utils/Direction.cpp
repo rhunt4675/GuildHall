@@ -1,26 +1,25 @@
 #include "../include/Direction.h"
 
-
- Direction::Direction(float startTheta, float startPhi, float startLength){
+Direction::Direction(float startTheta, float startPhi, float startLength){
     angleTheta = startTheta;
     anglePhi = startPhi;
     length = startLength;
     recomputeOrientation();
- }
- 
-  Direction::Direction(float startTheta, float startPhi){
+}
+
+Direction::Direction(float startTheta, float startPhi){
     angleTheta = startTheta;
     anglePhi = startPhi;
     length = 1;
     recomputeOrientation();
- }
-                
- Direction::Direction(){
+}
+
+Direction::Direction(){
     angleTheta = 0;
     anglePhi = 0;
     length = 1;
     recomputeOrientation();
-  };
+};
 
 
 
@@ -37,7 +36,7 @@ float Direction::getDirZ(){
 }
 
 float Direction::getLength(){
-  return length;
+    return length;
 }
 
 float Direction::getVecX(){
@@ -58,9 +57,9 @@ void Direction::recomputeOrientation() {
     dirX = sin(angleTheta)*sin(anglePhi);
     dirY = -cos(anglePhi);
     dirZ = cos(angleTheta)*sin(anglePhi);
-    
 
-    
+
+
     double normalize = dirX * dirX + dirY * dirY + dirZ * dirZ;
     normalize = sqrt(normalize);
     dirX /= normalize;
@@ -69,15 +68,15 @@ void Direction::recomputeOrientation() {
 }
 
 void Direction::change_angle(float theta, float phi){
-        angleTheta += theta;       
-        anglePhi += phi;
-        if(anglePhi < 0){
-            anglePhi = 0;
-        }
-        if (anglePhi > M_PI){
-            anglePhi = M_PI;
-        }
-  recomputeOrientation();
+    angleTheta += theta;       
+    anglePhi += phi;
+    if(anglePhi < 0){
+        anglePhi = 0;
+    }
+    if (anglePhi > M_PI){
+        anglePhi = M_PI;
+    }
+    recomputeOrientation();
 }
 
 float Direction::getTheta(){
@@ -89,8 +88,8 @@ float Direction::getPhi(){
 }
 
 void Direction::change_length(float delta){
-  length += delta;
-  if(length < 0){
-    length = 0;
-  }
+    length += delta;
+    if(length < 0){
+        length = 0;
+    }
 }

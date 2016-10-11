@@ -26,7 +26,9 @@ class bezierCurve : public drawable {
     void toogleCurveVis();
     unsigned int getSize();
     Point getNextCordinate();
+    Point getArcCordinate();
     void arcLengthParam();
+    Point linearInterpolation(Point a, Point b, float t);
     
     private:
     void setDefaults();
@@ -34,12 +36,15 @@ class bezierCurve : public drawable {
     float cageR,cageG,cageB;
     Point evaluateBezierCurve( ControlPoint p0, ControlPoint p1, ControlPoint p2, ControlPoint p3, float t );
     vector<ControlPoint> controlPoints;
+    vector<Point> arcLengthCurve;
     int order;
     vector<Point> curvePoints;
     unsigned int location;
     void caculatePoints();
     int resolution;
-    
+    unsigned int arcLocation;
+    float distance(Point& start, Point& end);   
+    bool threshold(float a, float b);
     protected:
     bool pointsVis;
     bool cageVis;

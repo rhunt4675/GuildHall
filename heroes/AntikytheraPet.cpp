@@ -5,7 +5,7 @@ void AntikytheraPet::loadPath(bezierCurve* curvey){
 }
 
 void AntikytheraPet::timeEvent(float angle){
-    location = path->getNextCordinate();
+    location = path->getArcCordinate();
     ringAngle = angle;
 }
 
@@ -49,6 +49,7 @@ void AntikytheraPet::drawPet(){
 
 AntikytheraPet::AntikytheraPet(bezierCurve* input){
     path = input;
+    path->arcLengthParam();
 }
 
 void AntikytheraPet::drawSphereThingy(){

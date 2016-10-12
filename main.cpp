@@ -378,11 +378,8 @@ void renderScene()  {
 
 	    // Display the Cars
 	    wanderer->draw();
-            glPushMatrix(); {
-            	glTranslatef(wanderer->getX(), wanderer->getY(), wanderer->getZ());
-	    		fol1->draw();
-	    		fol2->draw();
-            } glPopMatrix();
+        fol1->draw();
+	    fol2->draw();
 	}
 
 	// Draw the Real-Time FPS in the bottom left

@@ -88,7 +88,7 @@ void drawGrid() {
      *	and then reenable it for use with the GLUT 3D Primitives.
      */
     glDisable( GL_LIGHTING );
-	glColor3ub(50, 50, 50);
+	glColor3ub(0, 55, 27);
 
 	int res = bezierCurve::getResolution();
 	for (unsigned int i = 0; i < surfacePoints.size() / res - 1; i++) {
@@ -386,6 +386,37 @@ void renderScene()  {
 	fol1->draw();
 	fol2->draw();
 
+	// Test Vectors
+	{
+	    int baseX = (int((wanderer->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution());
+	    int baseZ = int((wanderer->getZ() + 50) / 100 * bezierCurve::getResolution());
+
+		// calculate surface normal at current location
+		Point point0 = surfacePoints[baseX + baseZ];
+		Point point1 = surfacePoints[baseX + baseZ + 1];
+		Point point2 = surfacePoints[baseX + baseZ + bezierCurve::getResolution()];
+
+		Direction a(point1, point0);
+		Direction b(point2, point0);
+
+	    Direction normal = a * b;
+	    Direction car_perpendicular(cos(wanderer->getTheta()), 0, -sin(wanderer->getTheta()));
+	    Direction car_parallel(sin(wanderer->getTheta()), 0, cos(wanderer->getTheta()));
+
+	    Direction cross = car_perpendicular * normal;
+	    Direction cross2 = car_parallel * normal;
+
+
+	    glBegin(GL_LINES);
+	    	glLineWidth(3.f);
+	    	glColor3f(1, 0, 0); glVertex3f(wanderer->getX(), wanderer->getY() + 5, wanderer->getZ()); glVertex3f(wanderer->getX() + normal.getDirX() * 1000, wanderer->getY() + normal.getDirY() * 1000 + 5, wanderer->getZ() + normal.getDirZ() * 1000);
+	    	glColor3f(0, 1, 0); glVertex3f(wanderer->getX(), wanderer->getY() + 5, wanderer->getZ()); glVertex3f(wanderer->getX() + car_perpendicular.getDirX() * 1000, wanderer->getY() + car_perpendicular.getDirY() * 1000 + 5, wanderer->getZ() + car_perpendicular.getDirZ() * 1000);
+	    	glColor3f(0, 0, 1); glVertex3f(wanderer->getX(), wanderer->getY() + 5, wanderer->getZ()); glVertex3f(wanderer->getX() + car_parallel.getDirX() * 1000, wanderer->getY() + car_parallel.getDirY() * 1000 + 5, wanderer->getZ() + car_parallel.getDirZ() * 1000);
+	    	glColor3f(1, 1, 1); glVertex3f(wanderer->getX(), wanderer->getY() + 5, wanderer->getZ()); glVertex3f(wanderer->getX() + cross.getDirX() * 1000, wanderer->getY() + cross.getDirY() * 1000 + 5, wanderer->getZ() + cross.getDirZ() * 1000);glColor3f(1, 0, 0); glVertex3f(wanderer->getX(), wanderer->getY() + 5, wanderer->getZ()); glVertex3f(wanderer->getX() + normal.getDirX() * 1000, wanderer->getY() + normal.getDirY() * 1000 + 5, wanderer->getZ() + normal.getDirZ() * 1000);
+			glColor3f(0.5, 0.5, 0); glVertex3f(wanderer->getX(), wanderer->getY() + 5, wanderer->getZ()); glVertex3f(wanderer->getX() + cross2.getDirX() * 1000, wanderer->getY() + cross2.getDirY() * 1000 + 5, wanderer->getZ() + cross2.getDirZ() * 1000);
+	    glEnd();
+	}
+
     // Optionally display 1st Person Camera
     if (displayFPCamera) {
 		glMatrixMode (GL_MODELVIEW); glPushMatrix (); glLoadIdentity (); glMatrixMode (GL_PROJECTION); glPushMatrix (); glLoadIdentity ();
@@ -453,22 +484,25 @@ void renderScene()  {
 void myTimer (int value) {
 
 	// calculate surface normal at current location
-	Point point0 = surfacePoints[(int((wanderer->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((wanderer->getZ() + 50) / 100 * bezierCurve::getResolution()))];
-	Point point1 = surfacePoints[(int((wanderer->getX() + 50 + sin(wanderer->getTheta())) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((wanderer->getZ() + 50 + cos(wanderer->getTheta())) / 100 * bezierCurve::getResolution()))];
-	Point point2 = surfacePoints[(int((wanderer->getX() + 50 + sin(wanderer->getTheta() - M_PI / 2)) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((wanderer->getZ() + 50 + cos(wanderer->getTheta() - M_PI / 4) + 1) / 100 * bezierCurve::getResolution()))];
+    int baseX = (int((wanderer->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution());
+    int baseZ = int((wanderer->getZ() + 50) / 100 * bezierCurve::getResolution());
+
+	// calculate surface normal at current location
+	Point point0 = surfacePoints[baseX + baseZ];
+	Point point1 = surfacePoints[baseX + baseZ + 1];
+	Point point2 = surfacePoints[baseX + baseZ + bezierCurve::getResolution()];
 
 	Direction a(point1, point0);
-	Direction b(point2,point0);
+	Direction b(point2, point0);
 
-    Direction cross = a * b;
+    Direction normal = a * b;
+    Direction car_perpendicular(cos(wanderer->getTheta()), 0, -sin(wanderer->getTheta()));
+    Direction car_parallel(sin(wanderer->getTheta()), 0, cos(wanderer->getTheta()));
+    Direction cross = car_perpendicular * normal;
+    Direction cross2 = car_parallel * normal;
 
-	float newPhi = acos(cross.getDirY()) - M_PI / 2;
-	if (point0.getY() < point1.getY()) newPhi = M_PI - newPhi;
-	if (newPhi < 0) newPhi *= -1;
-	if (newPhi > M_PI) newPhi -= M_PI;
-	
-	if (!(newPhi != newPhi))
-		wanderer->rotate(wanderer->getTheta(), newPhi);
+    wanderer->setPitch(cross2.getPhi() - M_PI/2);
+    wanderer->rotate(M_PI + cross.getTheta(), M_PI-cross.getPhi());
 
 	// Check which keys are down
     if (keys['w' - 'a'] == 1) {
@@ -526,8 +560,6 @@ void myTimer (int value) {
 	follower = heroPath2.getNextCordinate();
 	fol2->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
 	fol2->rotate(tangent.getTheta() + M_PI, tangent.getPhi());
-
-//	std::cout << tangent.getTheta() << " " << tangent.getPhi() << endl;
 
     // Update camera and redraw
     antikythera->animate();
@@ -641,6 +673,8 @@ int main (int argc, char **argv) {
     // move the wanderer vehicles
     diomedes->move(10, 0, 0);
     diomedes->rotate(0, M_PI / 2);
+    diomedes->normalize(0, 0, 1);
+
 	// move the hero vehicles
 	for (int i = 0; i < 300; i++) heroPath1.getArcCordinate();		// offsets the cars
 	Point init = heroPath1.getArcCordinate();
@@ -705,5 +739,6 @@ int main (int argc, char **argv) {
 
     return(0);
 }
+
 
 

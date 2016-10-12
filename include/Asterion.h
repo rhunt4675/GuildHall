@@ -21,6 +21,7 @@ public:
 
 	void rotateLeftWheel(float amount) { wheelRotation = wheelRotation + 15 % 360; }
 	void rotateRightWheel(float amount ) { wheelRotation = wheelRotation - 15 % 360; }
+	void setPitch(float amount) {}
 
         /*
 	float getX() { return x; }

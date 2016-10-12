@@ -30,6 +30,8 @@ class Hero: public Point, public Direction{
 		virtual void rotateLeftWheel(float amt) = 0;
 		virtual void rotateRightWheel(float amt) = 0;
 
+		// Set the car pitch
+		virtual void setPitch(float amt) = 0;
 };
 
 #endif

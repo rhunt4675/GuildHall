@@ -15,6 +15,7 @@ class Antikythera : public Hero {
         void animate() {}
         void rotateLeftWheel(float amt) {}
         void rotateRightWheel(float amt) {}
+        void setPitch(float amt) {}
 
     private:
         void drawBody();

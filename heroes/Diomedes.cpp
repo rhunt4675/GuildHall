@@ -18,6 +18,7 @@ void Diomedes::draw() {
     glTranslatef(posX,posY,posZ);
     glRotatef(angleTheta * 180 / M_PI - 90, 0, 1, 0);
     glRotatef(anglePhi * 180 / M_PI - 90, 0 , 0 , 1);
+    glRotatef(pitch * 180 / M_PI, 1, 0, 0);
     buildCar();
     glPopMatrix();
 }

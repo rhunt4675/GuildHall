@@ -150,8 +150,29 @@ void drawObjects() {
             glPopMatrix();
 
 			glPopMatrix();
-        }
-	
+        } else if (objects[i].type == "basketball") {
+        	Point loc = objects[i].location;
+        	Point surface = surfacePoints[(int((loc.getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((loc.getZ() + 50) / 100 * bezierCurve::getResolution()))];
+        	loc.move(surface.getX(), surface.getY(), surface.getZ());
+
+        	glPushMatrix();
+        	glTranslatef(loc.getX(), loc.getY() + objects[i].size, loc.getZ());
+        	glScalef(objects[i].size, objects[i].size, objects[i].size);
+
+    		glColor3ub(255, 165, 0);
+			glutSolidSphere(1, 20, 20);
+
+			glColor3ub(0, 0, 0);
+			for (int rot = 0; rot < 360; rot += 45) {
+				glPushMatrix();
+				GLUquadric *q = gluNewQuadric();
+				glRotatef(rot, 0, 1, 0);
+				gluCylinder(q, 1.03, 1.03, 0.05, 20, 20);
+				gluDeleteQuadric(q);
+				glPopMatrix();
+			}
+			glPopMatrix();
+		}
     }
 }
 
@@ -365,7 +386,10 @@ void renderScene()  {
 
     // Optionally display 1st Person Camera
     if (displayFPCamera) {
-
+		glMatrixMode (GL_MODELVIEW); glPushMatrix (); glLoadIdentity (); glMatrixMode (GL_PROJECTION); glPushMatrix (); glLoadIdentity ();
+		glBegin (GL_QUADS); glColor3f(0, 0, 0); glVertex3f (1, -1, -1); glVertex3f (1, -0.333, -1); glVertex3f (0.333, -0.333, -1); glVertex3f (0.333, -1, 1); glEnd ();
+		glPopMatrix (); glMatrixMode (GL_MODELVIEW); glPopMatrix ();
+	
 	    // First-Person Cam
 	    glClear(GL_DEPTH_BUFFER_BIT);
 	    glViewport(2*windowWidth/3, 0, windowWidth/3, windowHeight/3);
@@ -376,11 +400,8 @@ void renderScene()  {
 
 	    // Display the Cars
 	    wanderer->draw();
-            glPushMatrix(); {
-            	glTranslatef(wanderer->getX(), wanderer->getY(), wanderer->getZ());
-	    		fol1->draw();
-	    		fol2->draw();
-            } glPopMatrix();
+        fol1->draw();
+	    fol2->draw();
 	}
 
 	// Draw the Real-Time FPS in the bottom left
@@ -597,15 +618,7 @@ int main (int argc, char **argv) {
     glutInitWindowSize(windowWidth,windowHeight);
     glutCreateWindow("Guild Wars");
 
-
-	string infile;
-	if (argc < 2) {
-		std::cout << "Input infile: " << endl;
-		std::cin >> infile;
-	}
-	else infile = argv[1];
-
-    InputReader reader(infile);
+    InputReader reader("input/infile.txt");
     heroPath1 = reader.getHeroPath();
 	heroPath2 = reader.getHeroPath();
 	surfacePoints = reader.getPoints();

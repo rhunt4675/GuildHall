@@ -150,7 +150,29 @@ void drawObjects() {
             glPopMatrix();
 
 			glPopMatrix();
-        }
+        } else if (objects[i].type == "basketball") {
+        	Point loc = objects[i].location;
+        	Point surface = surfacePoints[(int((loc.getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((loc.getZ() + 50) / 100 * bezierCurve::getResolution()))];
+        	loc.move(surface.getX(), surface.getY(), surface.getZ());
+
+        	glPushMatrix();
+        	glTranslatef(loc.getX(), loc.getY() + objects[i].size, loc.getZ());
+        	glScalef(objects[i].size, objects[i].size, objects[i].size);
+
+    		glColor3ub(255, 165, 0);
+			glutSolidSphere(1, 20, 20);
+
+			glColor3ub(0, 0, 0);
+			for (int rot = 0; rot < 360; rot += 45) {
+				glPushMatrix();
+				GLUquadric *q = gluNewQuadric();
+				glRotatef(rot, 0, 1, 0);
+				gluCylinder(q, 1.03, 1.03, 0.05, 20, 20);
+				gluDeleteQuadric(q);
+				glPopMatrix();
+			}
+			glPopMatrix();
+		}
     }
 }
 

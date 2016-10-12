@@ -620,7 +620,14 @@ int main (int argc, char **argv) {
     glutInitWindowSize(windowWidth,windowHeight);
     glutCreateWindow("Guild Wars");
 
-    InputReader reader("input/infile.txt");
+	string infile;
+	if (argc < 2) {
+		std::cout << "Input file: " << endl;
+		std::cin >> infile;
+	}
+	else infile = argv[1];
+
+    InputReader reader(infile);
     heroPath1 = reader.getHeroPath();
 	heroPath2 = reader.getHeroPath();
 	surfacePoints = reader.getPoints();

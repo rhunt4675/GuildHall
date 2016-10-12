@@ -9,7 +9,7 @@ private:
 	//float x, y, z, theta, phi;
 
 	// car WHEEL/ANTENNA rotation in radians
-	float wheelRotLeft, wheelRotRight, antennaRot;
+	float wheelRotLeft = 0, wheelRotRight = 0, antennaRot;
 
 	// Draw the car wheel
 	void drawWheel();
@@ -44,8 +44,8 @@ public:
 	void draw();
 
 	// Rotate the car wheels by amt
-	void rotateLeftWheel(float amt) {wheelRotLeft += amt;};
-	void rotateRightWheel(float amt) {wheelRotRight += amt;};
+	void rotateLeftWheel(float amt) {wheelRotLeft += amt;}
+	void rotateRightWheel(float amt) {wheelRotRight += amt;}
 };
 
 #endif

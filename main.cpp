@@ -364,7 +364,10 @@ void renderScene()  {
 
     // Optionally display 1st Person Camera
     if (displayFPCamera) {
-
+		glMatrixMode (GL_MODELVIEW); glPushMatrix (); glLoadIdentity (); glMatrixMode (GL_PROJECTION); glPushMatrix (); glLoadIdentity ();
+		glBegin (GL_QUADS); glColor3f(0, 0, 0); glVertex3f (1, -1, -1); glVertex3f (1, -0.333, -1); glVertex3f (0.333, -0.333, -1); glVertex3f (0.333, -1, 1); glEnd ();
+		glPopMatrix (); glMatrixMode (GL_MODELVIEW); glPopMatrix ();
+	
 	    // First-Person Cam
 	    glClear(GL_DEPTH_BUFFER_BIT);
 	    glViewport(2*windowWidth/3, 0, windowWidth/3, windowHeight/3);

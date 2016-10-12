@@ -358,9 +358,9 @@ void renderScene()  {
     glCallList(environmentDL);
 
 	// Display the Cars
-	diomedes->draw();
-	antikythera->draw();
-	asterion->draw();
+	wanderer->draw();
+	fol1->draw();
+	fol2->draw();
 
     // Optionally display 1st Person Camera
     if (displayFPCamera) {
@@ -374,12 +374,12 @@ void renderScene()  {
 	    glCallList(environmentDL);
 
 	    // Display the Cars
-	    diomedes->draw();
-            glPushMatrix();
-            glTranslatef(diomedes->getX(), diomedes->getY(), diomedes->getZ());
-	    antikythera->draw();
-	    asterion->draw();
-            glPopMatrix();
+	    wanderer->draw();
+            glPushMatrix(); {
+            	glTranslatef(wanderer->getX(), wanderer->getY(), wanderer->getZ());
+	    		fol1->draw();
+	    		fol2->draw();
+            } glPopMatrix();
 	}
 
 	// Draw the Real-Time FPS in the bottom left
@@ -512,7 +512,7 @@ void myTimer (int value) {
 
 	// Update Cameras
     camera.updateCarPosition(*camerafollower);
-    fpcamera.updatePosition(camerafollower->getX(), camerafollower->getY() + 5, camerafollower->getZ(), camerafollower->getDirX(), camerafollower->getDirY(), camerafollower->getDirZ());
+    fpcamera.updatePosition(camerafollower->getX(), camerafollower->getY() + 4, camerafollower->getZ(), camerafollower->getDirX(), camerafollower->getDirY(), camerafollower->getDirZ());
 	glutPostRedisplay();
 	glutTimerFunc(20, myTimer, 0);
 }

@@ -20,10 +20,18 @@
 #include <sys/time.h>
 
 #ifdef __APPLE__           // if compiling on Mac OS
+    #include <ALUT/alut.h>  // OpenAL Headers
+    #include <OpenAL/al.h>
+    #include <OpenAL/alc.h>
+
     #include <GLUT/glut.h>
     #include <OpenGL/gl.h>
     #include <OpenGL/glu.h>
 #else                   // else compiling on Linux OS
+ 	#include <AL/alut.h>    // OpenAL Headers
+    #include <AL/al.h>
+    #include <AL/alc.h>
+
     #include <GL/glut.h>
     #include <GL/gl.h>
     #include <GL/glu.h>
@@ -42,6 +50,7 @@
 static size_t windowWidth  = 640;
 static size_t windowHeight = 480;
 static float aspectRatio;
+GLint windowId;                             // id for our main window
 
 GLint leftMouseButton;                      // status of the mouse buttons
 int mouseX = 0, mouseY = 0;                 // last known X and Y of the mouse
@@ -57,14 +66,19 @@ bezierCurve heroPath1, heroPath2;
 Point prevPoint1, prevPoint2;
 vector<Object> objects;
 vector<Point> surfacePoints;
-//Sprite sprite;								// hero's sprite
 
-//std::vector<Point> points;					// Bezier control points
-//bool displayBezierCurve = true;				// Toggle Bezier curve visibility
-//bool displayControlCage = true;				// Toggle control cage visibility
 bool displayFPCamera = false;				// Toggle first person camera
 int frames = 1;
 long int start_millis = 0;
+
+// Globals for OpenAL ---------------------------------------------
+#define NUM_BUFFERS 2
+#define NUM_SOURCES 2
+
+ALCdevice *device;
+ALCcontext *context;
+ALuint buffers[ NUM_BUFFERS ];
+ALuint sources[ NUM_SOURCES ];
 
 // getRand() ///////////////////////////////////////////////////////////////////
 //
@@ -100,16 +114,6 @@ void drawGrid() {
 		glEnd();
 	}
 
-    /** TODO #3: DRAW A GRID IN THE XZ-PLANE USING GL_LINES **/
-//    glBegin(GL_LINES); {
-//    	glColor3ub(50, 50, 50);
-//        for (int i = -cityLength; i <= cityLength; i++) {
-//            glVertex3f(i, 0, -50);
-//            glVertex3f(i, 0, 50);
-//            glVertex3f(-50, 0, i);
-//            glVertex3f(50, 0, i);
-//        }
-//    } glEnd();
     /*
      *	As noted above, we are done drawing with OpenGL Primitives, so we
      *	must turn lighting back on.
@@ -322,13 +326,20 @@ void normalKeysUp(unsigned char key, int x, int y) {
         keys[key - 'a'] = 0;
 }
 
-// initScene() /////////////////////////////////////////////////////////////////
+// initializeOpenGL() //////////////////////////////////////////////////////////
 //
 //  A basic scene initialization function; should be called once after the
 //      OpenGL context has been created. Doesn't need to be called further.
 //
 ////////////////////////////////////////////////////////////////////////////////
-void initScene()  {
+void initializeOpenGL(int argc, char* argv[])  {
+	// Initialize GLUT
+	glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+    glutInitWindowPosition(50,50);
+    glutInitWindowSize(windowWidth,windowHeight);
+    windowId = glutCreateWindow("Guild Wars");
+
     glEnable(GL_DEPTH_TEST);
 
     //******************************************************************//
@@ -354,6 +365,99 @@ void initScene()  {
 
     srand( time(NULL) );	// seed our random number generator
     generateEnvironmentDL();
+}
+
+// initializeOpenAL() //////////////////////////////////////////////////////////
+//
+//  Do all of our one time OpenAL & ALUT setup
+//
+////////////////////////////////////////////////////////////////////////////////
+void initializeOpenAL() {
+    ALsizei size, freq;
+    ALenum 	format = AL_FORMAT_MONO8;
+    ALvoid 	*data;
+    ALboolean loop;
+    
+    device = alcOpenDevice( NULL );
+	context = alcCreateContext( device, NULL );
+	alcMakeContextCurrent( context );
+    alGenBuffers( NUM_BUFFERS, buffers);
+	alGenSources( NUM_SOURCES, sources);
+	#ifdef __APPLE__
+		alutLoadWAVFile( (ALbyte*)"input/storm.wav", &format, &data, &size, &freq );
+	#else
+		alutLoadWAVFile( (ALbyte*)"input/storm.wav", &format, &data, &size, &freq, &loop );
+	#endif
+		alBufferData( buffers[0], format, data, size, freq );
+		alutUnloadWAV( format, data, size, freq );
+	
+	alSourcei( sources[0], AL_BUFFER, buffers[0] );
+	alSourcei( sources[0], AL_LOOPING, AL_TRUE );
+	alSourcef( sources[0], AL_ROLLOFF_FACTOR, 1.3f );
+	alSourcef( sources[0], AL_GAIN, 0.5f );
+
+	#ifdef __APPLE__
+		alutLoadWAVFile( (ALbyte*)"input/engine.wav", &format, &data, &size, &freq );
+	#else
+		alutLoadWAVFile( (ALbyte*)"input/engine.wav", &format, &data, &size, &freq, &loop );
+	#endif
+		alBufferData( buffers[1], format, data, size, freq );
+		alutUnloadWAV( format, data, size, freq );
+	
+	alSourcei( sources[1], AL_BUFFER, buffers[1] );
+	alSourcei( sources[1], AL_LOOPING, AL_FALSE );
+}
+
+// cleanupOpenGL() /////////////////////////////////////////////////////////////
+//
+//  At exit, clean up all of our OpenGL objects
+//
+////////////////////////////////////////////////////////////////////////////////
+void cleanupOpenGL() {
+    glutDestroyWindow( windowId );  // destroy our window
+}
+
+// cleanupOpenAL() /////////////////////////////////////////////////////////////
+//
+//  At exit, clean up all of our OpenAL objects
+//
+////////////////////////////////////////////////////////////////////////////////
+void cleanupOpenAL() {
+    /* TODO #03: Cleanup OpenAL & ALUT */
+    alcMakeContextCurrent( NULL );
+	alcDestroyContext( context );
+	alcCloseDevice( device ); 
+    /* TODO #07: Delete our Buffers and Sources */
+	alDeleteBuffers(NUM_BUFFERS, buffers);
+	alDeleteSources(NUM_SOURCES, sources);
+}
+
+// positionListener() //////////////////////////////////////////////////////////
+//
+// This function updates the listener's position and orientation.  First, the
+//  global listener variables are updated.  Then the position and orientation
+//  are set through the approriate OpenAL calls.
+//
+////////////////////////////////////////////////////////////////////////////////
+void positionListener( float posX, float posY, float posZ,
+                       float dirX, float dirY, float dirZ,
+                       float upX = 0, float upY = 1, float upZ = 0 ) {
+	ALfloat listenerPos[3] = {posX, posY, posZ};
+	ALfloat listenerOri[6] = {dirX, dirY, dirZ, upX, upY, upZ};
+	alListenerfv( AL_POSITION, listenerPos);
+	alListenerfv( AL_ORIENTATION, listenerOri);
+	
+}
+
+// positionSource() ////////////////////////////////////////////////////////////
+//
+// This function updates the sources's position.  The position
+//  is set through the approriate OpenAL calls.
+//
+////////////////////////////////////////////////////////////////////////////////
+void positionSource( ALuint src, float posX, float posY, float posZ ) {
+	ALfloat srcPos[3] = {posX, posY, posZ};
+	alSourcefv( src, AL_POSITION, srcPos );
 }
 
 // renderScene() ///////////////////////////////////////////////////////////////
@@ -501,6 +605,10 @@ void myTimer (int value) {
     Direction cross = car_perpendicular * normal;
     Direction cross2 = car_parallel * normal;
 
+    // query source_1
+    int state;
+    alGetSourcei(sources[1], AL_SOURCE_STATE, &state);
+
     wanderer->setPitch(cross2.getPhi() - M_PI/2);
     wanderer->rotate(M_PI + cross.getTheta(), M_PI-cross.getPhi());
 
@@ -517,6 +625,7 @@ void myTimer (int value) {
         wanderer->move(wanderer->getX() + -sin(wanderer->getTheta()) * 0.3,
 					surfacePoints[(int((wanderer->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((wanderer->getZ() + 50) / 100 * bezierCurve::getResolution()))].getY(),
                     wanderer->getZ() + -cos(wanderer->getTheta()) * 0.3);
+    	if (state != AL_PLAYING) alSourcePlay( sources[1] );
     } if (keys['a' - 'a'] == 1) {
     	wanderer->rotate(wanderer->getTheta() + 0.03f, wanderer->getPhi());
     	wanderer->rotateLeftWheel(0.05);
@@ -561,7 +670,7 @@ void myTimer (int value) {
 	fol2->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
 	fol2->rotate(tangent.getTheta() + M_PI, tangent.getPhi());
 
-    // Update camera and redraw
+    // Animate Heros
     antikythera->animate();
     diomedes->animate();
     asterion->animate();
@@ -569,6 +678,11 @@ void myTimer (int value) {
 	// Update Cameras
     camera.updateCarPosition(*camerafollower);
     fpcamera.updatePosition(camerafollower->getX(), camerafollower->getY() + 4, camerafollower->getZ(), camerafollower->getDirX(), camerafollower->getDirY(), camerafollower->getDirZ());
+
+    // Update listeners and sources
+   	positionListener(wanderer->getX(), wanderer->getY(), wanderer->getZ(), sin(wanderer->getTheta()), 0, cos(wanderer->getTheta()));
+    positionSource( sources[1], wanderer->getX(), wanderer->getY(), wanderer->getZ());
+
 	glutPostRedisplay();
 	glutTimerFunc(20, myTimer, 0);
 }
@@ -647,18 +761,12 @@ void myMenu(int value) {
 int main (int argc, char **argv) {
 	string infile;
 	if (argc < 2) {
-		std::cout << "Input file: " << endl;
+		std::cout << "Input file: ";
 		std::cin >> infile;
 	}
 	else infile = argv[1];
 
-    // create a double-buffered GLUT window at (50,50) with predefined windowsize
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-    glutInitWindowPosition(50,50);
-    glutInitWindowSize(windowWidth,windowHeight);
-    glutCreateWindow("Guild Wars");
-
+	// read input files
     InputReader reader(infile);
     heroPath1 = reader.getHeroPath();
 	heroPath2 = reader.getHeroPath();
@@ -699,6 +807,14 @@ int main (int argc, char **argv) {
     fpcamera.enableFreeCam();
     fpcamera.updateUpVector(0, 1, 0);
 
+    // Initialize OpenGL Library
+    initializeOpenGL(argc, argv);
+
+    // Initialize OpenAL Library
+    initializeOpenAL();
+    positionSource(sources[0], 0, 0, 0);
+   	alSourcePlay( sources[0] );
+
     // initialize the popup menus
     int cselect = glutCreateMenu(cameraSelect);
     glutAddMenuEntry("ArcBall Camera", 0);
@@ -726,19 +842,17 @@ int main (int argc, char **argv) {
     glutMotionFunc(mouseMotion);
 	glutTimerFunc(0, myTimer, 0); 
 
-    // do some basic OpenGL setup
-    initScene();
-
     // hit the stopwatch
     struct timeval tp;
 	gettimeofday(&tp, NULL);
 	start_millis = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+
+	// cleanup opengl and openal
+    atexit( cleanupOpenGL );
+    atexit( cleanupOpenAL );
 
     // and enter the GLUT loop, never to exit.
     glutMainLoop();
 
     return(0);
 }
-
-
-

@@ -31,9 +31,14 @@ LOCAL_BIN_PATH = /Users/jpaone/Desktop/bin
 
 
 BUILDING_IN_LAB = 1
+USING_OPENAL = 1
 USING_OPENGL = 1
 USING_GLUI = 0
 
+ifeq ($(USER), ryhunt)
+LOCAL_INC_PATH = ./include
+LOCAL_LIB_PATH = ./lib
+endif
 
 ifeq ($(USER), rybailey)
 LOCAL_INC_PATH = /usr/include
@@ -95,6 +100,32 @@ ifeq ($(USING_OPENGL), 1)
     # Linux and all other builds
     else
         LIBS += -lglut -lGL -lGLU
+    endif
+endif
+
+#############################
+## SETUP OpenAL & ALUT
+#############################
+
+# if we are using OpenAL & GLUT in this program
+ifeq ($(USING_OPENAL), 1)
+    # Windows builds
+    ifeq ($(OS), Windows_NT)
+        INCPATH += -I$(LAB_INC_PATH)
+        LIBPATH += -L$(LAB_LIB_PATH)
+        LIBS += -lalut.dll -lOpenAL32.dll
+
+    # Mac builds
+    else ifeq ($(shell uname), Darwin)
+        INCPATH += -I$(LOCAL_INC_PATH)
+        LIBPATH += -L$(LOCAL_LIB_PATH)
+        LIBS += -framework OpenAL
+
+    # Linux and all other builds
+    else
+        INCPATH += -I$(LOCAL_INC_PATH)
+        LIBPATH += -L$(LOCAL_LIB_PATH)
+        LIBS += -lalut -lopenal
     endif
 endif
 

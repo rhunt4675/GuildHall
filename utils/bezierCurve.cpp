@@ -210,7 +210,7 @@ Direction bezierCurve::getTanget(){
     }
 
     if (location == (curvePoints.size() -1)){
-        a = curvePoints[0];
+        b = curvePoints[0];
     }
     else {
         b = curvePoints[location + 1];
@@ -226,10 +226,10 @@ Direction bezierCurve::getArcTanget(){
     }
     Point a,b;
     if (arcLocation == 0){
-        b = arcLengthCurve[arcLengthCurve.size()-1];
+        a = arcLengthCurve[arcLengthCurve.size()-1];
     }
     else {
-        b = arcLengthCurve[arcLocation - 1];
+        a = arcLengthCurve[arcLocation - 1];
     }
     if (arcLocation == arcLengthCurve.size()-1){
         b = arcLengthCurve[0];

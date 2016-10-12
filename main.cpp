@@ -128,19 +128,21 @@ void drawObjects() {
             int height = getRand() * 5 + 10;
 
 			Point loc = objects[i].location;
+        	Point surface = surfacePoints[(int((loc.getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((loc.getZ() + 50) / 100 * bezierCurve::getResolution()))];
+        	loc.move(surface.getX(), surface.getY(), surface.getZ());
 
 			glPushMatrix(); glScalef(objects[i].size, objects[i].size, objects[i].size);
 
             glPushMatrix();
             glColor3ub(87, 35, 7);
-            glTranslatef(loc.getX(), height / 2.0, loc.getZ());
+            glTranslatef(loc.getX(), loc.getY() + height / 2.0, loc.getZ());
             glScalef(1, height, 1);
             glutSolidCube(1);
             glPopMatrix();
 
             glPushMatrix();
             glColor3ub(53, 98, 68);
-            glTranslatef(loc.getX(), height, loc.getZ());
+            glTranslatef(loc.getX(), loc.getY() + height, loc.getZ());
             glRotatef(-90, 1, 0, 0);
             glutSolidCone(3, 5, 20, 20);
             glTranslatef(0, 0, -3);
@@ -618,7 +620,14 @@ int main (int argc, char **argv) {
     glutInitWindowSize(windowWidth,windowHeight);
     glutCreateWindow("Guild Wars");
 
-    InputReader reader("input/infile.txt");
+	string infile;
+	if (argc < 2) {
+		std::cout << "Input file: " << endl;
+		std::cin >> infile;
+	}
+	else infile = argv[1];
+
+    InputReader reader(infile);
     heroPath1 = reader.getHeroPath();
 	heroPath2 = reader.getHeroPath();
 	surfacePoints = reader.getPoints();

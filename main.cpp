@@ -19,7 +19,7 @@
 #include <vector>
 #include <sys/time.h>
 
- #ifdef __APPLE__           // if compiling on Mac OS
+#ifdef __APPLE__           // if compiling on Mac OS
     #include <GLUT/glut.h>
     #include <OpenGL/gl.h>
     #include <OpenGL/glu.h>
@@ -88,11 +88,10 @@ void drawGrid() {
      *	and then reenable it for use with the GLUT 3D Primitives.
      */
     glDisable( GL_LIGHTING );
-
 	glColor3ub(50, 50, 50);
 
 	int res = bezierCurve::getResolution();
-	for (unsigned int i = 0; i < surfacePoints.size() / res; i++) {
+	for (unsigned int i = 0; i < surfacePoints.size() / res - 1; i++) {
 		glBegin(GL_QUAD_STRIP);
 		for (int j = 0; j < res / 2; j++) {
 			glVertex3fv(surfacePoints[i * res + 2 * j].getPos());
@@ -168,9 +167,8 @@ void drawObjects() {
 void generateEnvironmentDL() {
     // TODO #1 Create a Display List & Call our Drawing Functions
     environmentDL = glGenLists(1);
-
     glNewList(environmentDL, GL_COMPILE);
-    
+
     drawGrid();
     drawObjects();
     glEndList();
@@ -597,7 +595,6 @@ int main (int argc, char **argv) {
     glutInitWindowPosition(50,50);
     glutInitWindowSize(windowWidth,windowHeight);
     glutCreateWindow("Guild Wars");
-
 
     InputReader reader("input/infile.txt");
     heroPath1 = reader.getHeroPath();

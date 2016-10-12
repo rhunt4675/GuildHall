@@ -1,6 +1,10 @@
 #ifndef cordinate_header
 #define cordinate_header
 
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
 class Point {
     public:
         float getX();

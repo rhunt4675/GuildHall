@@ -65,6 +65,7 @@ CXX    = g++
 CFLAGS = -Wall -std=c++11 -g
 
 INCPATH += -I./include
+LIBPATH += -L./lib
 LAB_INC_PATH = C:/sw/opengl/include
 LAB_LIB_PATH = C:/sw/opengl/lib
 LAB_BIN_PATH = C:/sw/opengl/bin

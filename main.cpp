@@ -613,19 +613,19 @@ void myMenu(int value) {
 //
 ////////////////////////////////////////////////////////////////////////////////
 int main (int argc, char **argv) {
-    // create a double-buffered GLUT window at (50,50) with predefined windowsize
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-    glutInitWindowPosition(50,50);
-    glutInitWindowSize(windowWidth,windowHeight);
-    glutCreateWindow("Guild Wars");
-
 	string infile;
 	if (argc < 2) {
 		std::cout << "Input file: " << endl;
 		std::cin >> infile;
 	}
 	else infile = argv[1];
+
+    // create a double-buffered GLUT window at (50,50) with predefined windowsize
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+    glutInitWindowPosition(50,50);
+    glutInitWindowSize(windowWidth,windowHeight);
+    glutCreateWindow("Guild Wars");
 
     InputReader reader(infile);
     heroPath1 = reader.getHeroPath();

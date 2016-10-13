@@ -21,7 +21,7 @@
 ## compile against.
 ########################################
 
-TARGET = guild
+TARGET = guildWars
 
 OBJECTS = main.o utils/context.o heroes/Antikythera.o heroes/Diomedes.o utils/ControlPoint.o utils/Point.o utils/bezierCurve.o utils/Direction.o heroes/AntikytheraPet.o utils/Camera.o utils/InputReader.o heroes/Asterion.o utils/Light.o utils/Material.o
 

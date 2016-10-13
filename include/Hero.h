@@ -13,6 +13,7 @@
 #include <cmath>
 #include "Point.h"
 #include "Direction.h"
+#include "Material.h"
 
 class Hero: public Point, public Direction{
 	public:
@@ -32,6 +33,8 @@ class Hero: public Point, public Direction{
 
 		// Set the car pitch
 		virtual void setPitch(float amt) = 0;
+        protected:
+                Material cloth;
 };
 
 #endif

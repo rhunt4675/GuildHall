@@ -44,6 +44,8 @@
 #include "include/Camera.h"
 #include "include/bezierCurve.h"
 #include "include/InputReader.h"
+#include "include/Light.h"
+#include "include/Material.h"
 
 // GLOBAL VARIABLES ////////////////////////////////////////////////////////////
 
@@ -66,6 +68,9 @@ bezierCurve heroPath1, heroPath2;
 Point prevPoint1, prevPoint2;
 vector<Object> objects;
 vector<Point> surfacePoints;
+
+Material materialList;
+Light masterLight;
 
 bool displayFPCamera = false;				// Toggle first person camera
 int frames = 1;
@@ -101,14 +106,16 @@ void drawGrid() {
      *	Primitive - like a line, quad, point - we need to disable lighting
      *	and then reenable it for use with the GLUT 3D Primitives.
      */
-    glDisable( GL_LIGHTING );
+        materialList.setGreenPlastic();
 	glColor3ub(0, 55, 27);
 
 	int res = bezierCurve::getResolution();
 	for (unsigned int i = 0; i < surfacePoints.size() / res - 1; i++) {
 		glBegin(GL_QUAD_STRIP);
 		for (int j = 0; j < res / 2; j++) {
+                        glNormal3f(0,1,0); //I know that the ground is not flat. I can't think off a good way to caculate the correct value
 			glVertex3fv(surfacePoints[i * res + 2 * j].getPos());
+                        glNormal3f(0,1,0);
 			glVertex3fv(surfacePoints[i * res + 2 * j + res].getPos());
 		}
 		glEnd();
@@ -118,7 +125,6 @@ void drawGrid() {
      *	As noted above, we are done drawing with OpenGL Primitives, so we
      *	must turn lighting back on.
      */
-    glEnable( GL_LIGHTING );
 }
 
 // drawTrees() //////////////////////////////////////////////////////////////////
@@ -138,14 +144,16 @@ void drawObjects() {
 			glPushMatrix(); glScalef(objects[i].size, objects[i].size, objects[i].size);
 
             glPushMatrix();
-            glColor3ub(87, 35, 7);
+            materialList.setBrass();
+            //glColor3ub(87, 35, 7);
             glTranslatef(loc.getX(), loc.getY() + height / 2.0, loc.getZ());
             glScalef(1, height, 1);
             glutSolidCube(1);
             glPopMatrix();
 
             glPushMatrix();
-            glColor3ub(53, 98, 68);
+            materialList.setEmerald();
+            //glColor3ub(53, 98, 68);
             glTranslatef(loc.getX(), loc.getY() + height, loc.getZ());
             glRotatef(-90, 1, 0, 0);
             glutSolidCone(3, 5, 20, 20);
@@ -164,8 +172,8 @@ void drawObjects() {
         	glPushMatrix();
         	glTranslatef(loc.getX(), loc.getY() + objects[i].size, loc.getZ());
         	glScalef(objects[i].size, objects[i].size, objects[i].size);
-
-    		glColor3ub(255, 165, 0);
+                materialList.setCopper();
+    		//glColor3ub(255, 165, 0);
 			glutSolidSphere(1, 20, 20);
 
 			glColor3ub(0, 0, 0);
@@ -341,24 +349,26 @@ void initializeOpenGL(int argc, char* argv[])  {
     windowId = glutCreateWindow("Guild Wars");
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_NORMALIZE); 
+    glShadeModel(GL_FLAT);
 
     //******************************************************************//
     // this is some code to enable a default light for the scene;
     // feel free to play around with this, but we won't talk about
     // lighting in OpenGL for another couple of weeks yet.
-    float lightCol[4] = { 1, 1, 1, 1};
-    float ambientCol[4] = { 0.0, 0.0, 0.0, 1.0 };
-    float lPosition[4] = { 10, 10, 10, 1 };
-    glLightfv( GL_LIGHT0, GL_POSITION,lPosition );
-    glLightfv( GL_LIGHT0, GL_DIFFUSE,lightCol );
-    glLightfv( GL_LIGHT0, GL_AMBIENT, ambientCol );
+    float difuseCol[4] = { 0.4, 0.4, 0.5, 1};
+    float secCol[4] = {0.1,0.1,0.1,1};
+    float ambientCol[4] = { .03, 0.03, 0.03, 1};
+    float lPosition[3] = { 10, 10, 10};
     glEnable( GL_LIGHTING );
-    glEnable( GL_LIGHT0 );
+    masterLight.setPos(lPosition);
+    masterLight.setDiffuse(difuseCol);
+    masterLight.setAmbient(ambientCol);
+    masterLight.setSpecular(secCol);
+    masterLight.enable();
 
     // tell OpenGL not to use the material system; just use whatever we 
     // pass with glColor*()
-    glEnable( GL_COLOR_MATERIAL );
-    glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
     //******************************************************************//
 
     glShadeModel(GL_FLAT);
@@ -773,6 +783,11 @@ int main (int argc, char **argv) {
 	surfacePoints = reader.getPoints();
 	objects = reader.getObjects();
 
+
+   // Initialize OpenGL Library
+    initializeOpenGL(argc, argv);
+
+
     // initialize the hero vehicles
     antikythera = new Antikythera();
     diomedes = new Diomedes();
@@ -807,10 +822,7 @@ int main (int argc, char **argv) {
     fpcamera.enableFreeCam();
     fpcamera.updateUpVector(0, 1, 0);
 
-    // Initialize OpenGL Library
-    initializeOpenGL(argc, argv);
-
-    // Initialize OpenAL Library
+     // Initialize OpenAL Library
     initializeOpenAL();
     positionSource(sources[0], 0, 0, 0);
    	alSourcePlay( sources[0] );

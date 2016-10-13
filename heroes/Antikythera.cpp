@@ -12,12 +12,24 @@
 }*/
 
 Antikythera::Antikythera() {
+    headLamp.enable();
+    GLfloat cut = 12;
+    GLfloat fall = 100;
+    float diffuseCol[4] = { .5, .5, .5, 1.0 };
+    float ambientCol[4] = { 0.1, 0.1, 0.1, 1.0 };
+    headLamp.setDiffuse(diffuseCol);
+    headLamp.setAmbient(ambientCol);
+    headLamp.setSpecular(ambientCol);
+    //headLamp.setSpotCut(cut);
+    //headLamp.setFall(fall);
+    flashLightAngle = 0;
+    flashLightUp = true;
 }
 
 //Draws the main body
 void Antikythera::drawBody(){
     glPushMatrix();
-    glColor3ub(34, 139, 34);
+    cloth.setTurquoise();
     glScalef(8,1,2);
     glutSolidCube(1);
     glPopMatrix();
@@ -26,14 +38,14 @@ void Antikythera::drawBody(){
 
 void Antikythera::drawAxel(){
     glPushMatrix();
-    glColor3ub(255, 192, 235);
+    cloth.setJade();
     glutSolidCone(.7,3,20,20);
     glPopMatrix();
 }
 
 void Antikythera::drawWheel(){
     glPushMatrix();
-    glColor3ub(128,128,128);
+    cloth.setBlackRubber();
     glutSolidTorus(.4, .7, 20, 20);
     glPopMatrix();
 }
@@ -74,7 +86,7 @@ void Antikythera::drawDriveTrain(float rotation){
 
 //Draws a Rocket
 void Antikythera::drawRocket(){
-    glColor3ub(206,17,65);
+    cloth.setRuby();
     glPushMatrix();
     glutSolidCone(.5,2,20,20);
     glPopMatrix();
@@ -125,6 +137,24 @@ void Antikythera::drawBackJets(){
 }
 
 void Antikythera::drawHero(){
+    glEnable( GL_LIGHTING );
+    glPushMatrix();
+    glTranslatef(2.3,2.3,0);
+    glRotatef(-90,0,1,0);
+    glRotatef(flashLightAngle,0,1,0);
+    glPushMatrix();
+        glTranslatef(3,5,0);
+        //float pos[3] = {3,3,3};
+        //headLamp.setPos(pos);
+        float dir[3] = {0,0,0};
+        headLamp.setDir(dir);
+        //headLamp.enable();
+    glPopMatrix();
+    cloth.setChrome();
+    glutSolidCone(1,3,20,20);
+    glPopMatrix();
+
+    
     glPushMatrix();
     glTranslatef(-2,1,0);
     drawBody();
@@ -141,17 +171,19 @@ void Antikythera::drawHero(){
     drawDriveTrain(leftWheels);
     glPopMatrix();
 
+    /*
     glPushMatrix();
     glRotatef(90,1,0,0);
     drawUnderJets();
     glPopMatrix();
 
+    
     glPushMatrix();
     glTranslatef(-6,1,0);
     glRotatef(-90,0,1,0);
     drawBackJets();
     glPopMatrix();
-
+*/
     // Text
     glDisable( GL_LIGHTING );
     char srctext[25] = "Antikythera";
@@ -177,6 +209,16 @@ void Antikythera::draw(){
     drawHero();
     //kitty.draw();
     glPopMatrix();
+}
+
+void Antikythera::animate(){
+    flashLightAngle += flashLightUp ? 2 : -2;
+    if (flashLightAngle >= 60){
+        flashLightUp = false;
+    }
+    if (flashLightAngle <= -60){
+        flashLightUp = true;
+    }
 }
 
 

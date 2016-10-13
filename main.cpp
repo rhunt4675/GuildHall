@@ -141,7 +141,8 @@ void drawObjects() {
         	Point surface = surfacePoints[(int((loc.getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution() + int((loc.getZ() + 50) / 100 * bezierCurve::getResolution()))];
         	loc.move(surface.getX(), surface.getY(), surface.getZ());
 
-			glPushMatrix(); glScalef(objects[i].size, objects[i].size, objects[i].size);
+			glPushMatrix(); glTranslatef(0, objects[i].size, 0);
+							glScalef(objects[i].size, objects[i].size, objects[i].size);
 
             glPushMatrix();
             materialList.setBrass();

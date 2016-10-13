@@ -74,7 +74,7 @@ unsigned int bezierCurve::getSize(){
 void bezierCurve::caculatePoints(){
     curvePoints.clear();
     location = 0;
-    //std::cout<<"BEGIN"<<std::endl;
+    //std::cout<<"BEGIN"<<std::endl; 
     float step=1.0/resolution;
     for(unsigned int i = 3; i < controlPoints.size(); i += 3){
         for(float t = 0; t < 1; t += step){

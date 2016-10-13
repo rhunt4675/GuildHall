@@ -14,7 +14,7 @@ InputReader::InputReader(string infile) {
 			getline(inputData, line);
 			ss.clear(); ss.str("");
 			ss << line;
-			int x, y, z;
+			float x, y, z;
 			ss >> x >> y >> z;
 			points.push_back(Point(x, y, z));
 		}
@@ -29,7 +29,7 @@ InputReader::InputReader(string infile) {
 		getline(inputData, line);
 		ss.clear(); ss.str("");
 		ss << line;
-		int x, y, z;
+		float x, y, z;
 		ss >> x >> y >> z;
 		heroCurvePoints.push_back(Point(x, y, z));
 	}

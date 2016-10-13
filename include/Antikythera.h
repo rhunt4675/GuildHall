@@ -4,6 +4,7 @@
 //#include "context.h"
 #include "Hero.h"
 //#include "AntikytheraPet.h"
+#include "Light.h"
 
 class Antikythera : public Hero {
     public:
@@ -12,7 +13,7 @@ class Antikythera : public Hero {
         //Antikythera(float startX, float startY, float startZ, float startTheta, float startPhi, context* point, bezierCurve* petPath );
         Antikythera();
        // Animate the hero
-        void animate() {}
+        void animate();
         void rotateLeftWheel(float amt) {}
         void rotateRightWheel(float amt) {}
         void setPitch(float amt) {}
@@ -32,6 +33,8 @@ class Antikythera : public Hero {
         float anglePitch;
         void drawHero();
 
+        Light headLamp;
+
         //context* worldContext;
         
         //Movement and animation speed paramaters
@@ -47,7 +50,8 @@ class Antikythera : public Hero {
         bool airborn;
         float rearFlame;
         float rocketAnimation;
-    
+        float flashLightAngle;
+        bool flashLightUp;
         const int key_w = 119;
         const int key_s = 115;
         const int key_a = 97;

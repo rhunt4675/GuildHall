@@ -76,9 +76,9 @@ void bezierCurve::caculatePoints(){
     location = 0;
     //std::cout<<"BEGIN"<<std::endl;
     float step=1.0/resolution;
-    for(unsigned int start = 0; start + 4 <= controlPoints.size(); start += 3){
+    for(unsigned int i = 3; i < controlPoints.size(); i += 3){
         for(float t = 0; t < 1; t += step){
-            Point p = evaluateBezierCurve(controlPoints[start],controlPoints[start+1],controlPoints[start+2],controlPoints[start+3],t);
+            Point p = evaluateBezierCurve(controlPoints[i],controlPoints[i],controlPoints[i],controlPoints[i],t);
             //std::cout<<p.getX()<<", "<<p.getY()<<", "<<p.getZ()<<std::endl;
             curvePoints.push_back(p);
         }
@@ -166,7 +166,7 @@ void bezierCurve::draw(){
 //            controlPoints[i].draw();
 //        }
 //    }
-
+cageVis = true; curveVis = true;
     if(cageVis){
         glPushMatrix();
         glDisable(GL_LIGHTING);

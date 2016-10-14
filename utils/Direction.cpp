@@ -39,7 +39,7 @@ void Direction::recomputeAngle(){
     dirY /= length;
     dirZ /= length;
     //double angle = dirY/length;
-        anglePhi = acos(dirY);
+        anglePhi = acos(-dirY);
    angleTheta = atan2(-dirZ,dirX) - M_PI / 2;
 
 }

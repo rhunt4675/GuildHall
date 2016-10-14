@@ -13,15 +13,15 @@
 
 Antikythera::Antikythera() {
     headLamp.enable();
-    GLfloat cut = 12;
+    GLfloat cut = 30;
     GLfloat fall = 100;
-    float diffuseCol[4] = { .5, .5, .5, 1.0 };
-    float ambientCol[4] = { 0.1, 0.1, 0.1, 1.0 };
+    float diffuseCol[4] = { .7, .5, .5, 1.0 };
+    float ambientCol[4] = { 0.5, 0.1, 0.1, 1.0 };
     headLamp.setDiffuse(diffuseCol);
     headLamp.setAmbient(ambientCol);
     headLamp.setSpecular(ambientCol);
-    //headLamp.setSpotCut(cut);
-    //headLamp.setFall(fall);
+    headLamp.setSpotCut(cut);
+    headLamp.setFall(fall);
     flashLightAngle = 0;
     flashLightUp = true;
 }
@@ -143,11 +143,12 @@ void Antikythera::drawHero(){
     glRotatef(-90,0,1,0);
     glRotatef(flashLightAngle,0,1,0);
     glPushMatrix();
-        glTranslatef(3,5,0);
-        //float pos[3] = {3,3,3};
-        //headLamp.setPos(pos);
-        float dir[3] = {0,0,0};
-        headLamp.setDir(dir);
+        glTranslatef(1,0,0);
+        //glRotatef(180,0,1,0);
+        float pos[3] = {0,0,0};
+        headLamp.setPos(pos);
+        float dir[3] = {0,0,-1}; 
+        headLamp.setSpotDir(dir);
         //headLamp.enable();
     glPopMatrix();
     cloth.setChrome();
@@ -204,7 +205,7 @@ void Antikythera::draw(){
     glPushMatrix(); 
     glTranslatef(posX, posY, posZ);
     glRotatef(angleTheta * 180 / M_PI - 90, 0 , 1, 0);
-    glRotatef(anglePhi * 180 / M_PI, 0 , 0 , 1);
+    glRotatef(anglePhi * 180 / M_PI -90, 0 , 0 , 1);
     //glRotatef(pitch, 1 , 0 ,0);
     drawHero();
     //kitty.draw();

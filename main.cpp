@@ -357,7 +357,7 @@ void initializeOpenGL(int argc, char* argv[])  {
     // lighting in OpenGL for another couple of weeks yet.
     float difuseCol[4] = { 0.4, 0.4, 0.5, 1};
     float secCol[4] = {0.1,0.1,0.1,1};
-    float ambientCol[4] = { .03, 0.03, 0.03, 1};
+    float ambientCol[4] = { .1, 0.1, 0.1, 1};
     glEnable( GL_LIGHTING );
     masterLight.setDiffuse(difuseCol);
     masterLight.setAmbient(ambientCol);
@@ -488,7 +488,7 @@ void renderScene()  {
     glMatrixMode(GL_MODELVIEW);              //make sure we aren't changing the projection matrix!
     glViewport(0, 0, windowWidth, windowHeight);
     camera.doLookAt();
-    float lPosition[3] = { 10, 10, 10};
+    float lPosition[3] = { 10, 30, 10};
     masterLight.setPos(lPosition);
     // Display the Environment
     glCallList(environmentDL);
@@ -497,7 +497,8 @@ void renderScene()  {
 	wanderer->draw();
 	fol1->draw();
 	fol2->draw();
-
+        heroPath1.draw();
+        heroPath2.draw();
 	// Test Vectors
 	{
 	    int baseX = (int((wanderer->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution());

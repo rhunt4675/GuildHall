@@ -4,6 +4,7 @@
 #include"Direction.h"
 #include"Point.h"
 #include"drawable.h"
+#include"Material.h"
 #include <vector>
 #include <string>
 #include <iostream>
@@ -57,6 +58,7 @@ private:
     unsigned int arcLocation;
     float distance(Point& start, Point& end);   
     bool threshold(float a, float b);
+    Material cloth;
     protected:
     static int resolution;
     bool pointsVis;

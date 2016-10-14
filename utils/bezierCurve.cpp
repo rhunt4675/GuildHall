@@ -166,11 +166,11 @@ void bezierCurve::draw(){
 //            controlPoints[i].draw();
 //        }
 //    }
-cageVis = true; curveVis = true;
+cageVis = false; curveVis = true;
     if(cageVis){
         glPushMatrix();
         glDisable(GL_LIGHTING);
-        glColor3f(cageR,cageG,cageB);
+
         glLineWidth(3.0f);	
         glBegin( GL_LINE_STRIP );
         for(unsigned int i = 0; i < controlPoints.size(); ++i){
@@ -185,7 +185,7 @@ cageVis = true; curveVis = true;
     if(curveVis){
         glPushMatrix();
         glDisable( GL_LIGHTING );
-        glColor3f(lineR,lineG,lineB);
+        cloth.setCopper();
         glLineWidth(3.0f);
         glBegin(GL_LINE_STRIP);
         for(unsigned int i = 0; i < curvePoints.size(); ++i){

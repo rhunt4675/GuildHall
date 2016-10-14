@@ -64,7 +64,8 @@ static int cityLength = 50;                 // city boundaries
 Camera camera, fpcamera;					// world camera
 Hero *antikythera, *diomedes, *asterion;    // hero vehicles
 Hero *wanderer, *camerafollower, *fol1, *fol2;
-bezierCurve heroPath1, heroPath2;
+bezierCurve heroPath;
+//bezierCurve heroPath1, heroPath2;
 Point prevPoint1, prevPoint2;
 vector<Object> objects;
 vector<Point> surfacePoints;
@@ -497,8 +498,10 @@ void renderScene()  {
 	wanderer->draw();
 	fol1->draw();
 	fol2->draw();
-        heroPath1.draw();
-        heroPath2.draw();
+        heroPath.draw();
+        //heroPath1.draw();
+        //heroPath2.draw();
+        /*
 	// Test Vectors
 	{
 	    int baseX = (int((wanderer->getX() + 50) / 100 * bezierCurve::getResolution()) * bezierCurve::getResolution());
@@ -530,6 +533,7 @@ void renderScene()  {
 	    glEnd();
 	}
 
+        */
     // Optionally display 1st Person Camera
     if (displayFPCamera) {
 		glMatrixMode (GL_MODELVIEW); glPushMatrix (); glLoadIdentity (); glMatrixMode (GL_PROJECTION); glPushMatrix (); glLoadIdentity ();
@@ -546,8 +550,9 @@ void renderScene()  {
 
 	    // Display the Cars
 	    wanderer->draw();
-        fol1->draw();
+            fol1->draw();
 	    fol2->draw();
+            heroPath.draw();
 	}
 
 	// Draw the Real-Time FPS in the bottom left
@@ -585,9 +590,9 @@ void renderScene()  {
     // push the back buffer to the screen
     glutSwapBuffers();
 
-    for(GLenum err; (err = glGetError()) != GL_NO_ERROR;){
-          cout<<err<<endl;
-    }
+    //for(GLenum err; (err = glGetError()) != GL_NO_ERROR;){
+    //      cout<<err<<endl;
+    //}
     // update the counter
     frames++;
 }
@@ -671,15 +676,24 @@ void myTimer (int value) {
                 wanderer->getZ() > cityLength - 5 ? cityLength - 5 : wanderer->getZ());
 
 	// Update follower positions
-	Direction tangent = heroPath1.getArcTanget();
-	Point follower = heroPath1.getArcCordinate();
-	fol1->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
+	//Direction tangent = heroPath1.getArcTanget();
+	//Point follower = heroPath1.getArcCordinate();
+	//fol1->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
+	Direction tangent = heroPath.getArcTanget();
+        Point follower = heroPath.getArcCordinate();
+        fol1->move(follower.getX(), follower.getY(), follower.getZ());
 	fol1->rotate(tangent.getTheta() + M_PI, tangent.getPhi());
 
 
-	tangent = heroPath2.getTanget();
-	follower = heroPath2.getNextCordinate();
-	fol2->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
+	//tangent = heroPath2.getTanget();
+	//follower = heroPath2.getNextCordinate();
+	//fol2->move(wanderer->getX() + follower.getX(), wanderer->getY() + follower.getY(), wanderer->getZ() + follower.getZ());
+	tangent = heroPath.getTanget();
+        follower = heroPath.getNextCordinate();
+        //std::cout<<follower.getX()<<"   "<<follower.getY()<<" "<<follower.getZ()<<std::endl;
+        //std::cout<<tangent.getDirX()<<"   "<<tangent.getDirY()<<" "<<tangent.getDirZ()<<std::endl;
+        //std::cout<<tangent.getDirY()<<" "<<tangent.getLength()<<"   "<<tangent.getPhi() * 180/M_PI<<std::endl;
+        fol2->move(follower.getX(),follower.getY(), follower.getZ());
 	fol2->rotate(tangent.getTheta() + M_PI, tangent.getPhi());
 
     // Animate Heros
@@ -780,8 +794,8 @@ int main (int argc, char **argv) {
 
 	// read input files
     InputReader reader(infile);
-    heroPath1 = reader.getHeroPath();
-	heroPath2 = reader.getHeroPath();
+    heroPath = reader.getHeroPath();
+	//heroPath2 = reader.getHeroPath();
 	surfacePoints = reader.getPoints();
 	objects = reader.getObjects();
 
@@ -801,11 +815,11 @@ int main (int argc, char **argv) {
     diomedes->normalize(0, 0, 1);
 
 	// move the hero vehicles
-	for (int i = 0; i < 300; i++) heroPath1.getArcCordinate();		// offsets the cars
-	Point init = heroPath1.getArcCordinate();
+	for (int i = 0; i < 300; i++) heroPath.getArcCordinate();		// offsets the cars
+	Point init = heroPath.getArcCordinate();
     antikythera->move(init.getX(), init.getY(), init.getZ());
     antikythera->rotate(0, M_PI / 2);
-	init = heroPath2.getNextCordinate();
+	init = heroPath.getNextCordinate();
     asterion->move(init.getX(), init.getY(), init.getZ());
     asterion->rotate(0, M_PI / 2);
 

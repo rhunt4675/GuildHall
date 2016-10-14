@@ -77,7 +77,7 @@ void bezierCurve::caculatePoints(){
     //std::cout<<"BEGIN"<<std::endl; 
     float step=1.0/resolution;
     for(unsigned int start = 0; start +4 <= controlPoints.size(); start += 3){
-        for(float t = 0; t < 1; t += step){
+        for(float t = 0; t <= 1; t += step){
             Point p = evaluateBezierCurve(controlPoints[start],controlPoints[start+1],controlPoints[start+2],controlPoints[start+3],t);
             //std::cout<<p.getX()<<", "<<p.getY()<<", "<<p.getZ()<<std::endl;
             curvePoints.push_back(p);
@@ -184,7 +184,6 @@ cageVis = false; curveVis = true;
 
     if(curveVis){
         glPushMatrix();
-        glDisable( GL_LIGHTING );
         cloth.setCopper();
         glLineWidth(3.0f);
         glBegin(GL_LINE_STRIP);
@@ -192,7 +191,6 @@ cageVis = false; curveVis = true;
             glVertex3fv(curvePoints[i].getPos());
         }
         glEnd();
-        glEnable( GL_LIGHTING );
         glPopMatrix();
     }
 
@@ -208,14 +206,16 @@ Direction bezierCurve::getTanget(){
     else {
         a = curvePoints[location-1];
     }
-
+    /*
     if (location == (curvePoints.size() -1)){
         b = curvePoints[0];
     }
     else {
         b = curvePoints[location + 1];
     }
-    Direction d(b,a);
+    */
+    b = curvePoints[location];
+    Direction d (b,a);
     return d;
 }
 

@@ -626,8 +626,8 @@ void myTimer (int value) {
     int state;
     alGetSourcei(sources[1], AL_SOURCE_STATE, &state);
 
-    wanderer->setPitch(cross2.getPhi() - M_PI/2);
-    wanderer->rotate(M_PI + cross.getTheta(), M_PI-cross.getPhi());
+    wanderer->setPitch((M_PI - cross2.getPhi()) - M_PI/2);
+    wanderer->rotate(M_PI + cross.getTheta(), cross.getPhi());
 
 	// Check which keys are down
     if (keys['w' - 'a'] == 1) {

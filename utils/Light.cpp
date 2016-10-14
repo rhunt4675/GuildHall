@@ -5,6 +5,7 @@ Light::Light(){
         id = GL_LIGHT0 + num;
         //std::cout<<num<<std::endl;
         num++;
+        glEnable(id);
     }
     else {
         std::cerr<<"Failed to create light. To many light already exists. Program will still run be will not work as expected. You should really fix this"<<std::endl;

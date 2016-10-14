@@ -2,7 +2,7 @@
 
 void Asterion::drawSpoke() {
 	glPushMatrix();
-	glColor3f(0, 0, 0);					// black
+	cloth.setBlackPlastic();					// black
 	glScalef(3, 0.25, 0.25);
 	glutSolidCube(1);
 	glPopMatrix();
@@ -10,7 +10,7 @@ void Asterion::drawSpoke() {
 
 void Asterion::drawWheel() {
 	glPushMatrix();
-	glColor3f(0.24, 0.35, 0.67);				// blue
+	cloth.setTurquoise();				// blue
 	glScalef(1, 1, 0.5);
 	glutSolidTorus(1, 2, 50, 50);
 	glPopMatrix();
@@ -26,7 +26,7 @@ void Asterion::drawWheel() {
 
 void Asterion::buildCar() {
 	glPushMatrix();
-	glColor3f(0.25, 0.41, 0.88);			// different blue
+	cloth.setPearl();		// different blue
 	glTranslatef(0, 3, 0);
 	glScalef(24, 3, 6);
 	glutSolidCube(1);
@@ -71,7 +71,7 @@ void Asterion::buildCar() {
 
 	// Front indicator
 	glPushMatrix();
-	glColor3f(0.23, 0.23, 0.23);			// grey
+	cloth.setBrass();			// grey
 	glTranslatef(8, 5, 0);
 	glRotatef(teapotRotation, 0, 1, 0);
 	glutSolidTeapot(1);
@@ -106,6 +106,7 @@ void Asterion::rotate(float thetaIn, float phiIn) {
 */
 
 void Asterion::draw() {
+    glEnable( GL_LIGHTING );
 	glPushMatrix();
 	glTranslatef(posX, posY, posZ);
 	glScalef(0.4, 0.4, 0.4);

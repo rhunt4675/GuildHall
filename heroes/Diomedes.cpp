@@ -55,12 +55,12 @@ void Diomedes::rotate(float theta, float phi) {
 ////////////////////////////////////////////////////////////////////////////////
 void Diomedes::drawWheel() {
 	// Draw the Tire
-	glColor3ub(50, 50, 50);
-	glutSolidTorus(0.5, 1, 30, 50);
+	cloth.setBlackRubber();
+        glutSolidTorus(0.5, 1, 30, 50);
 
 	// Draw the Spokes
 	glPushMatrix();
-	glColor3ub(255, 0, 0);
+        cloth.setRuby();
 	glScalef(0.1, 1, 0.2);
 	glutSolidCube(2);
 	glScalef(10, 0.1, 1);
@@ -69,7 +69,7 @@ void Diomedes::drawWheel() {
 
 	// Draw the Hub Caps
 	glPushMatrix();
-	glColor3ub(0, 0, 0);
+        cloth.setBlackPlastic();
 	glTranslatef(0, 0, 0.25);
 	glutSolidCone(0.1, 0, 20, 20);
 	glTranslatef(0, 0, -0.5);
@@ -85,14 +85,14 @@ void Diomedes::drawWheel() {
 void Diomedes::drawBody() {
 	// Draw Body
 	glPushMatrix();
-	glColor3ub(0, 0, 255);
+        cloth.setJade();
 	glScalef(6, 1, 3);
 	glutSolidCube(1);
 	glPopMatrix();
 
 	// Draw Antenna
 	glPushMatrix();
-	glColor3ub(255, 255, 255);
+        cloth.setChrome();
 	glTranslatef(-2.5, 2, 0);
 	glRotatef(antennaRot * 180 / M_PI, 0, 1, 0);
 	glutSolidTorus(0.1, 0.5, 20, 20);
@@ -100,7 +100,7 @@ void Diomedes::drawBody() {
 
 	// Draw Antenna Mount
 	glPushMatrix();
-	glColor3ub(255, 255, 255);
+        cloth.setSilver();
 	glTranslatef(-2.5, 1, 0);
 	glScalef(0.1, 1, 0.1);
 	glutSolidCube(1);
@@ -108,7 +108,7 @@ void Diomedes::drawBody() {
 
 	// Draw Arrow Body
 	glPushMatrix();
-	glColor3ub(0, 0, 0);
+        cloth.setBlackPlastic();
 	glTranslatef(0, 0.55f, 0);
 	glScalef(3.5, 0, 1);
 	glutSolidCube(1);

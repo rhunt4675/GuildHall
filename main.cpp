@@ -107,7 +107,6 @@ void drawGrid() {
      *	and then reenable it for use with the GLUT 3D Primitives.
      */
         materialList.setGreenPlastic();
-	glColor3ub(0, 55, 27);
 
 	int res = bezierCurve::getResolution();
 	for (unsigned int i = 0; i < surfacePoints.size() / res - 1; i++) {
@@ -343,14 +342,13 @@ void normalKeysUp(unsigned char key, int x, int y) {
 ////////////////////////////////////////////////////////////////////////////////
 void initializeOpenGL(int argc, char* argv[])  {
 	// Initialize GLUT
-	glutInit(&argc, argv);
+    glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(50,50);
     glutInitWindowSize(windowWidth,windowHeight);
     windowId = glutCreateWindow("Guild Wars");
-
+    glEnable(GL_NORMALIZE);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_NORMALIZE); 
     glShadeModel(GL_FLAT);
 
     //******************************************************************//
@@ -360,9 +358,7 @@ void initializeOpenGL(int argc, char* argv[])  {
     float difuseCol[4] = { 0.4, 0.4, 0.5, 1};
     float secCol[4] = {0.1,0.1,0.1,1};
     float ambientCol[4] = { .03, 0.03, 0.03, 1};
-    float lPosition[3] = { 10, 10, 10};
     glEnable( GL_LIGHTING );
-    masterLight.setPos(lPosition);
     masterLight.setDiffuse(difuseCol);
     masterLight.setAmbient(ambientCol);
     masterLight.setSpecular(secCol);
@@ -492,7 +488,8 @@ void renderScene()  {
     glMatrixMode(GL_MODELVIEW);              //make sure we aren't changing the projection matrix!
     glViewport(0, 0, windowWidth, windowHeight);
     camera.doLookAt();
-
+    float lPosition[3] = { 10, 10, 10};
+    masterLight.setPos(lPosition);
     // Display the Environment
     glCallList(environmentDL);
 
@@ -587,6 +584,9 @@ void renderScene()  {
     // push the back buffer to the screen
     glutSwapBuffers();
 
+    for(GLenum err; (err = glGetError()) != GL_NO_ERROR;){
+          cout<<err<<endl;
+    }
     // update the counter
     frames++;
 }
